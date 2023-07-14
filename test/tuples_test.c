@@ -74,3 +74,12 @@ Test(tuple_operations, tuple_cross_product)
     cr_expect_tuple_eq(tupleCross(vector(1, 2, 3), vector(2, 3, 4)), vector(-1, 2, -1));
     cr_expect_tuple_eq(tupleCross(vector(2, 3, 4), vector(1, 2, 3)), vector(1, -2, 1));
 }
+
+Test(tuple_operations, color_operations)
+{
+    cr_expect_tuple_eq(color(-0.5, 0.4, 1.7), ((Tuple){-0.5, 0.4, 1.7, 0}));
+    cr_expect_tuple_eq(tupleAdd(color(0.9, 0.6, 0.75), color(0.7, 0.1, 0.25)), color(1.6, 0.7, 1.0));
+    cr_expect_tuple_eq(tupleSub(color(0.9, 0.6, 0.75), color(0.7, 0.1, 0.25)), color(0.2, 0.5, 0.5));
+    cr_expect_tuple_eq(tupleMul(color(0.2, 0.3, 0.4), 2), color(0.4, 0.6, 0.8));
+    cr_expect_tuple_eq(tupleProd(color(1, 0.2, 0.4), color(0.9, 1, 0.1)), color(0.9, 0.2, 0.04));
+}

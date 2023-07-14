@@ -74,3 +74,15 @@ Tuple tupleCross(Tuple a, Tuple b)
 {
     return (Tuple){a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x, 0};
 }
+
+// Returns the Hadamard product
+Tuple tupleProd(Tuple a, Tuple b)
+{
+   return (Tuple){a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w};
+}
+
+void tick(Tuple *projectilePosition, Tuple *projectileVelocity, Tuple gravityVector, Tuple windVector)
+{
+    *projectilePosition = tupleAdd(*projectilePosition, *projectileVelocity);
+    *projectileVelocity = tupleAdd(*projectileVelocity, tupleAdd(gravityVector, windVector));
+}
