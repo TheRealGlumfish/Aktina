@@ -78,7 +78,18 @@ Tuple tupleCross(Tuple a, Tuple b)
 // Returns the Hadamard product
 Tuple tupleProd(Tuple a, Tuple b)
 {
-   return (Tuple){a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w};
+    return (Tuple){a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w};
+}
+
+// Scales and limits the value of the tuple to be between 0-255 so it can be used in a PPM file
+Tuple tuplePPM(Tuple a)
+{
+    Tuple scaled = tupleMul(a, PPM_DEPTH);
+    scaled.x = fmin(fmax(0, scaled.x), PPM_DEPTH);
+    scaled.y = fmin(fmax(0, scaled.y), PPM_DEPTH);
+    scaled.z = fmin(fmax(0, scaled.z), PPM_DEPTH);
+    scaled.w = fmin(fmax(0, scaled.w), PPM_DEPTH);
+    return scaled;
 }
 
 void tick(Tuple *projectilePosition, Tuple *projectileVelocity, Tuple gravityVector, Tuple windVector)

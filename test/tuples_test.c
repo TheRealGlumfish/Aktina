@@ -1,5 +1,5 @@
 /*
- * operations.c - Tests for operations on tuples
+ * tuples_test.c - Tests on tuple implementation
  *
  * Copyright (c) 2023, Dimitrios Alexopoulos All rights reserved.
  */
@@ -82,4 +82,17 @@ Test(tuple_operations, color_operations)
     cr_expect_tuple_eq(tupleSub(color(0.9, 0.6, 0.75), color(0.7, 0.1, 0.25)), color(0.2, 0.5, 0.5));
     cr_expect_tuple_eq(tupleMul(color(0.2, 0.3, 0.4), 2), color(0.4, 0.6, 0.8));
     cr_expect_tuple_eq(tupleProd(color(1, 0.2, 0.4), color(0.9, 1, 0.1)), color(0.9, 0.2, 0.04));
+}
+
+Test(tuple_operations, tuple_ppm)
+{
+    cr_expect(eq(dbl, round(tuplePPM(color(1.5, 0, 0)).x), color(255, 0, 0).x));
+    cr_expect(eq(dbl, round(tuplePPM(color(1.5, 0, 0)).y), color(255, 0, 0).y));
+    cr_expect(eq(dbl, round(tuplePPM(color(1.5, 0, 0)).z), color(255, 0, 0).z));
+    cr_expect(eq(dbl, round(tuplePPM(color(0, 0.5, 0)).x), color(0, 128, 0).x));
+    cr_expect(eq(dbl, round(tuplePPM(color(0, 0.5, 0)).y), color(0, 128, 0).y));
+    cr_expect(eq(dbl, round(tuplePPM(color(0, 0.5, 0)).z), color(0, 128, 0).z));
+    cr_expect(eq(dbl, round(tuplePPM(color(-0.5, 0, 1)).x), color(0, 0, 255).x));
+    cr_expect(eq(dbl, round(tuplePPM(color(-0.5, 0, 1)).y), color(0, 0, 255).y));
+    cr_expect(eq(dbl, round(tuplePPM(color(-0.5, 0, 1)).z), color(0, 0, 255).z));
 }

@@ -8,6 +8,7 @@
 #define TUPLES_H
 
 #define color(red, green, blue) vector(red, green, blue)
+#define PPM_DEPTH 255
 
 // TODO: Change w to a bool
 typedef struct
@@ -31,7 +32,8 @@ Tuple tupleNorm(Tuple a);
 double tupleDot(Tuple a, Tuple b);
 Tuple tupleCross(Tuple a, Tuple b);
 Tuple tupleProd(Tuple a, Tuple b);
+Tuple tuplePPM(Tuple a);
 
-void tick(Tuple *projectile_position, Tuple *projectile_velocity, Tuple gravity_vector, Tuple wind_vector); 
+void tick(Tuple *projectile_position, Tuple *projectile_velocity, Tuple gravity_vector, Tuple wind_vector);
 
 #endif
