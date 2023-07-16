@@ -17,22 +17,22 @@ typedef struct
     double w; // point when w = 1, vector when w = 0
 } Tuple;
 
-Tuple point(double x, double y, double z);
-Tuple vector(double x, double y, double z);
+Tuple point(const double x, const double y, const double z);
+Tuple vector(const double x, const double y, const double z);
 
-Tuple tupleAdd(Tuple a, Tuple b);
-Tuple tupleSub(Tuple a, Tuple b);
-Tuple tupleNeg(Tuple a);
-Tuple tupleMul(Tuple a, double c);
-Tuple tupleDiv(Tuple a, double c);
+Tuple tupleAdd(const Tuple a, const Tuple b);
+Tuple tupleSub(const Tuple a, const Tuple b);
+Tuple tupleNeg(const Tuple a);
+Tuple tupleMul(const Tuple a, const double c);
+Tuple tupleDiv(const Tuple a, const double c);
 
-double tupleMag(Tuple a);
-Tuple tupleNorm(Tuple a);
+double tupleMag(const Tuple a);
+Tuple tupleNorm(const Tuple a);
 
-double tupleDot(Tuple a, Tuple b);
-Tuple tupleCross(Tuple a, Tuple b);
-Tuple tupleProd(Tuple a, Tuple b);
-Tuple tuplePPM(Tuple a);
+double tupleDot(const Tuple a, const Tuple b);
+Tuple tupleCross(const Tuple a, const Tuple b);
+Tuple tupleProd(const Tuple a, const Tuple b);
+Tuple tuplePPM(const Tuple a);
 
 void tick(Tuple *projectile_position, Tuple *projectile_velocity, Tuple gravity_vector, Tuple wind_vector);
 

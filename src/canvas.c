@@ -20,7 +20,7 @@ struct Canvas_s
 };
 
 // Canvas constructor and initializer
-Canvas *canvasCreate(uint64_t width, uint64_t height)
+Canvas *canvasCreate(const uint64_t width, const uint64_t height)
 {
     Canvas *canvas = malloc(sizeof(Canvas));
     if (canvas == NULL)
@@ -73,13 +73,13 @@ Canvas *canvasCopy(Canvas *canvas)
 }
 
 // Returns the specified pixel from the canvas
-Tuple canvasPixel(Canvas *canvas, uint64_t x, uint64_t y)
+Tuple canvasPixel(Canvas *canvas, const uint64_t x, const uint64_t y)
 {
     return canvas->pixelCanvas[x + y * canvas->width];
 }
 
 // Sets the specified pixel on the canvas
-void canvasPixelWrite(Canvas *canvas, uint64_t x, uint64_t y, Tuple pixel)
+void canvasPixelWrite(Canvas *canvas, const uint64_t x, const uint64_t y, const Tuple pixel)
 {
     canvas->pixelCanvas[x + y * canvas->width] = pixel;
 }

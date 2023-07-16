@@ -11,7 +11,8 @@
 #include "src/tuples.h"
 
 #define EPSILON 0.00001
-#define cr_expect_tuple_eq(a, b) cr_expect(all(epsilon_eq(dbl, a.x, b.x, EPSILON), epsilon_eq(dbl, a.y, b.y, EPSILON), epsilon_eq(a.z, b.z, EPSILON), eq(dbl, a.w, b.w, EPSILON)))
+#define cr_expect_tuple_eq(actual, expected) cr_expect(all(epsilon_eq(dbl, actual.x, expected.x, EPSILON), epsilon_eq(dbl, actual.y, expected.y, EPSILON), epsilon_eq(actual.z, expected.z, EPSILON), eq(dbl, actual.w, expected.w, EPSILON)))
+#define cr_assert_tuple_eq(actual, expected) cr_assert(all(epsilon_eq(dbl, actual.x, expected.x, EPSILON), epsilon_eq(dbl, actual.y, expected.y, EPSILON), epsilon_eq(actual.z, expected.z, EPSILON), eq(dbl, actual.w, expected.w, EPSILON)))
 
 Test(canvas_operations, canvas_create_destroy)
 {

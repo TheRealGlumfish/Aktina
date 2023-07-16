@@ -13,12 +13,12 @@
 
 typedef struct Canvas_s Canvas;
 
-Canvas *canvasCreate(uint64_t width, uint64_t height);
+Canvas *canvasCreate(const uint64_t width, const uint64_t height);
 void canvasDestroy(Canvas *canvas);
 Canvas *canvasCopy(Canvas *canvas);
 
-Tuple canvasPixel(Canvas *canvas, uint64_t x, uint64_t y);
-void canvasPixelWrite(Canvas *canvas, uint64_t x, uint64_t y, Tuple pixel);
+Tuple canvasPixel(Canvas *canvas, const uint64_t x, const uint64_t y);
+void canvasPixelWrite(Canvas *canvas, const uint64_t x, const uint64_t y, const Tuple pixel);
 
 uint64_t canvasWidth(Canvas *canvas);
 uint64_t canvasHeight(Canvas *canvas);
