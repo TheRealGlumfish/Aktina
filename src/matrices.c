@@ -114,21 +114,84 @@ double mat2Det(const Mat2 a)
     return a[0][0] * a[1][1] - a[1][0] * a[0][1];
 }
 
+// Stores the submatrix of a in dest
 void mat3SubM(Mat2 dest, const uint64_t row, const uint64_t col, const Mat3 a)
 {
+    uint64_t skipRow = 0;
+    uint64_t skipCol = 0;
+    for (uint64_t i = 0; i < 2; i++)
+    {
+        for (uint64_t j = 0; j < 2; j++)
+        {
+            if (i == row || j == col)
+            {
+                if (i == row)
+                {
+                    skipRow = 1;
+                    dest[i][j] = a[i + skipRow][j + skipCol];
+                }
+                if (j == col)
+                {
+                    skipCol = 1;
+                    dest[i][j] = a[i + skipRow][j + skipCol];
+                }
+            }
+            else
+            {
+                dest[i][j] = a[i + skipRow][j + skipCol];
+            }
+        }
+        skipCol = 0;
+    }
 }
 
 // Stores the submatrix of a in dest
 void mat4SubM(Mat3 dest, const uint64_t row, const uint64_t col, const Mat4 a)
 {
-    for (uint64_t i = 0; i < 4; i++)
+    uint64_t skipRow = 0;
+    for (uint64_t i = 0; i < 3; i++)
     {
-        for (uint64_t j = 0; j < 4; j++)
+        uint64_t skipCol = 0;
+        for (uint64_t j = 0; j < 3; j++)
         {
             if (i == row || j == col)
             {
-                continue;
+                if (i == row)
+                {
+                    skipRow = 1;
+                    dest[i][j] = a[i + skipRow][j + skipCol];
+                }
+                if (j == col)
+                {
+                    skipCol = 1;
+                    dest[i][j] = a[i + skipRow][j + skipCol];
+                }
+            }
+            else
+            {
+                dest[i][j] = a[i + skipRow][j + skipCol];
             }
         }
+    }
+}
+
+// Calculates the minor of a 3*3 matrix
+double mat3Min(const uint64_t row, uint64_t col, const Mat3 a)
+{
+    Mat2 submatrix;
+    mat3SubM(submatrix, row, col, a);
+    return mat2Det(submatrix);
+}
+
+// Calculates the cofactor of a 3*3 matrix
+double mat3Cof(const uint64_t row, uint64_t col, const Mat3 a)
+{
+    if (row % 2 != col % 2)
+    {
+        return -mat3Min(row, col, a);
+    }
+    else
+    {
+        return mat3Min(row, col, a);
     }
 }

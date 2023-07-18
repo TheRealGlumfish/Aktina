@@ -10,12 +10,12 @@ if criterion_dep.found()
   canvas_test = executable('canvas_tests', ['src/canvas.c', 'test/canvas_test.c', 'src/tuples.c'], dependencies : [m_dep, criterion_dep])
   matrices_test = executable('matrices_tests', ['src/matrices.c', 'test/matrices_test.c', 'src/tuples.c'], dependencies : [m_dep, criterion_dep])
   test('Tuple operations', tuples_test,
-    protocol : 'tap', args : ['--tap', '--always-succeed'],
+    protocol : 'tap', args : ['--tap', '--always-succeed', '-j0'],
     env : ['LSAN_OPTIONS=suppressions=../LSAN-suppressions.txt,print_suppressions=0'])
   test('Canvas operations', canvas_test,
-    protocol : 'tap', args : ['--tap', '--always-succeed'],
+    protocol : 'tap', args : ['--tap', '--always-succeed', '-j0'],
     env : ['LSAN_OPTIONS=suppressions=../LSAN-suppressions.txt,print_suppressions=0'])
   test('Matrix operations', matrices_test,
-    protocol : 'tap', args : ['--tap', '--always-succeed'],
+    protocol : 'tap', args : ['--tap', '--always-succeed', '-j0'],
     env : ['LSAN_OPTIONS=suppressions=../LSAN-suppressions.txt,print_suppressions=0'])
 endif

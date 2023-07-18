@@ -225,3 +225,37 @@ Test(matrix_operations, submatrix)
     mat2EqExpect(dest2, matB);
     mat3EqExpect(dest3, matD);
 }
+
+Test(matrix_operations, minor)
+{
+    Mat3 matA = {{3, 5, 0},
+                 {2, -1, -7},
+                 {6, -1, 5}};
+    cr_expect_dbl(mat3Min(0, 0, matA), -12);
+    cr_expect_dbl(mat3Min(1, 0, matA), 25);
+}
+
+Test(matrix_operations, cofactor)
+{
+    Mat3 matA = {{3, 5, 0},
+                 {2, -1, -7},
+                 {6, -1, 5}};
+    cr_expect_dbl(mat3Cof(0, 0, matA), -12);
+    cr_expect_dbl(mat3Cof(1, 0, matA), -25);
+    Mat3 matB = {{1, 2, 6},
+                 {-5, 8, -4},
+                 {2, 6, 4}};
+    cr_expect_dbl(mat3Cof(0, 0, matB), 56);
+    cr_expect_dbl(mat3Cof(0, 1, matB), 12);
+    cr_expect_dbl(mat3Cof(0, 2, matB), -46);
+    Mat4 matC = {{-2, -8, 3, 5},
+                 {-3, 1, 7, 3},
+                 {1, 2, -9, 6},
+                 {-6, 7, 7, -9}};
+    // cr_expect_dbl(mat4Cof(0, 0, matC), 690);
+    // cr_expect_dbl(mat4Cof(0, 0, matC), 690);
+}
+
+Test(matrix_operations, determinant)
+{
+}
