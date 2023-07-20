@@ -5,6 +5,7 @@
  */
 
 #include <math.h>
+#include <stddef.h>
 
 #include "tuples.h"
 

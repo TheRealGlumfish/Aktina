@@ -109,6 +109,7 @@ void mat4Trans(Mat4 dest, const Mat4 a)
     }
 }
 
+// Determinant of a 2*2 matrix
 double mat2Det(const Mat2 a)
 {
     return a[0][0] * a[1][1] - a[1][0] * a[0][1];
