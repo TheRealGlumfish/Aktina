@@ -9,6 +9,7 @@ if criterion_dep.found()
   tuples_test = executable('tuples_tests', ['src/tuples.c', 'test/tuples_test.c'], dependencies : [m_dep, criterion_dep])
   canvas_test = executable('canvas_tests', ['src/canvas.c', 'test/canvas_test.c', 'src/tuples.c'], dependencies : [m_dep, criterion_dep])
   matrices_test = executable('matrices_tests', ['src/matrices.c', 'test/matrices_test.c', 'src/tuples.c'], dependencies : [m_dep, criterion_dep])
+  vectors_test = executable('vectors_tests', ['src/vectors.c', 'test/vectors_test.c'], dependencies : [m_dep, criterion_dep])
   test('Tuple operations', tuples_test,
     protocol : 'tap', args : ['--tap', '--always-succeed', '-j0'],
     env : ['LSAN_OPTIONS=suppressions=../LSAN-suppressions.txt,print_suppressions=0'])
@@ -16,6 +17,9 @@ if criterion_dep.found()
     protocol : 'tap', args : ['--tap', '--always-succeed', '-j0'],
     env : ['LSAN_OPTIONS=suppressions=../LSAN-suppressions.txt,print_suppressions=0'])
   test('Matrix operations', matrices_test,
+    protocol : 'tap', args : ['--tap', '--always-succeed', '-j0'],
+    env : ['LSAN_OPTIONS=suppressions=../LSAN-suppressions.txt,print_suppressions=0'])
+  test('Vector operations', vectors_test,
     protocol : 'tap', args : ['--tap', '--always-succeed', '-j0'],
     env : ['LSAN_OPTIONS=suppressions=../LSAN-suppressions.txt,print_suppressions=0'])
 endif

@@ -108,7 +108,7 @@ Vec4 vec4Mul(Vec4 a, double b);
 Vec4 vec4Div(Vec4 a, double b);
 Vec4 vec4Neg(Vec4 a);
 
-double vec4Meg(Vec4 a);
+double vec4Mag(Vec4 a);
 Vec4 vec4Norm(Vec4 a);
 double vec4Dot(Vec4 a, Vec4 b);
 Vec4 vec4Prod(Vec4 a, Vec4 b);
@@ -131,7 +131,7 @@ Mat4 mat4Trans(Mat4 a);
 double mat2Det(Mat2 a);
 
 Mat2 mat3SubM(size_t row, size_t col, Mat3 a);
-Mat3 mat4SubM(size_t row, size_t col, Mat3 a);
+Mat3 mat4SubM(size_t row, size_t col, Mat4 a);
 
 double mat3Min(size_t row, size_t col, Mat3 a);
 double mat3Cof(size_t row, size_t col, Mat3 a);

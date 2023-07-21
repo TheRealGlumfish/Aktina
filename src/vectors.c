@@ -58,16 +58,14 @@ Vec2 vec2Neg(Vec2 a)
 // Returns the magnitude of a vector
 double vec2Mag(Vec2 a)
 {
-    return hypot(a.x, a.y);
+    return sqrt(a.x * a.x + a.y * a.y);
 }
 
+// TODO: Check generated assembly
 // Normalizes a vector
 Vec2 vec2Norm(Vec2 a)
 {
-    Vec2 result;
-    result.x /= vec2Mag(a);
-    result.y /= vec2Mag(a);
-    return result;
+    return vec2Div(a, vec2Mag(a));
 }
 
 // Returns the dot product of two vectors
@@ -144,11 +142,7 @@ double vec3Mag(Vec3 a)
 // Normalizes a vector
 Vec3 vec3Norm(Vec3 a)
 {
-    Vec3 result;
-    result.x /= vec3Mag(a);
-    result.y /= vec3Mag(a);
-    result.z /= vec3Mag(a);
-    return result;
+    return vec3Div(a, vec3Mag(a));
 }
 
 // Returns the dot product of two vectors
@@ -233,7 +227,7 @@ Vec4 vec4Neg(Vec4 a)
 }
 
 // Returns the magnitude of a vector
-double vec4Meg(Vec4 a)
+double vec4Mag(Vec4 a)
 {
     return sqrt(a.x * a.x + a.y * a.y + a.z * a.z + a.w * a.w);
 }
@@ -241,12 +235,7 @@ double vec4Meg(Vec4 a)
 // Normalizes a vector
 Vec4 vec4Norm(Vec4 a)
 {
-    Vec4 result;
-    result.x /= vec4Meg(a);
-    result.y /= vec4Meg(a);
-    result.z /= vec4Meg(a);
-    result.w /= vec4Meg(a);
-    return result;
+    return vec4Div(a, vec4Mag(a));
 }
 
 // Returns the dot product of two vectors
@@ -331,7 +320,7 @@ Mat2 mat2Mul(Mat2 a, Mat2 b)
 // Multiplies two 3*3 matrices and stores the result
 Mat3 mat3Mul(Mat3 a, Mat3 b)
 {
-    Mat3 result;
+    Mat3 result = {0};
     for (size_t row = 0; row < 3; row++)
     {
         for (size_t col = 0; col < 3; col++)
@@ -348,7 +337,7 @@ Mat3 mat3Mul(Mat3 a, Mat3 b)
 // Multiplies two 4*4 matrices
 Mat4 mat4Mul(Mat4 a, Mat4 b)
 {
-    Mat4 result;
+    Mat4 result = {0};
     for (size_t row = 0; row < 4; row++)
     {
         for (size_t col = 0; col < 4; col++)
@@ -478,7 +467,7 @@ Mat2 mat3SubM(size_t row, size_t col, Mat3 a)
 }
 
 // Submatrix of a 4*4 matrix
-Mat3 mat4SubM(size_t row, size_t col, Mat3 a)
+Mat3 mat4SubM(size_t row, size_t col, Mat4 a)
 {
     size_t skipRow = 0;
     size_t skipCol = 0;

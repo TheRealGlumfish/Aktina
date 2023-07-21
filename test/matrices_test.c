@@ -18,9 +18,9 @@
 // Triggers a cr_expect assertion to fail if the matrices are not equal
 void mat2EqExpect(const Mat2 actual, const Mat2 expected)
 {
-    for (uint64_t row = 0; row < 2; row++)
+    for (size_t row = 0; row < 2; row++)
     {
-        for (uint64_t col = 0; col < 2; col++)
+        for (size_t col = 0; col < 2; col++)
         {
             cr_expect_dbl(actual[row][col], expected[row][col]);
         }
@@ -28,13 +28,13 @@ void mat2EqExpect(const Mat2 actual, const Mat2 expected)
 }
 
 // Triggers a cr_assert assertion to fail if the matrices are not equal
-void mat2EqAssert(const Mat2 a, const Mat2 b)
+void mat2EqAssert(const Mat2 actual, const Mat2 expected)
 {
-    for (uint64_t row = 0; row < 4; row++)
+    for (size_t row = 0; row < 2; row++)
     {
-        for (uint64_t col = 0; col < 4; col++)
+        for (size_t col = 0; col < 2; col++)
         {
-            cr_assert_dbl(a[row][col], b[row][col]);
+            cr_assert_dbl(actual[row][col], expected[row][col]);
         }
     }
 }
@@ -42,9 +42,9 @@ void mat2EqAssert(const Mat2 a, const Mat2 b)
 // Triggers a cr_expect assertion to fail if the matrices are not equal
 void mat3EqExpect(const Mat3 actual, const Mat3 expected)
 {
-    for (uint64_t row = 0; row < 3; row++)
+    for (size_t row = 0; row < 3; row++)
     {
-        for (uint64_t col = 0; col < 3; col++)
+        for (size_t col = 0; col < 3; col++)
         {
             cr_expect_dbl(actual[row][col], expected[row][col]);
         }
@@ -52,13 +52,13 @@ void mat3EqExpect(const Mat3 actual, const Mat3 expected)
 }
 
 // Triggers a cr_assert assertion to fail if the matrices are not equal
-void mat3EqAssert(const Mat3 a, const Mat3 b)
+void mat3EqAssert(const Mat3 actual, const Mat3 expected)
 {
-    for (uint64_t row = 0; row < 3; row++)
+    for (size_t row = 0; row < 3; row++)
     {
-        for (uint64_t col = 0; col < 3; col++)
+        for (size_t col = 0; col < 3; col++)
         {
-            cr_assert_dbl(a[row][col], b[row][col]);
+            cr_assert_dbl(actual[row][col], expected[row][col]);
         }
     }
 }
@@ -66,9 +66,9 @@ void mat3EqAssert(const Mat3 a, const Mat3 b)
 // Triggers a cr_expect assertion to fail if the matrices are not equal
 void mat4EqExpect(const Mat4 actual, const Mat4 expected)
 {
-    for (uint64_t row = 0; row < 4; row++)
+    for (size_t row = 0; row < 4; row++)
     {
-        for (uint64_t col = 0; col < 4; col++)
+        for (size_t col = 0; col < 4; col++)
         {
             cr_expect_dbl(actual[row][col], expected[row][col]);
         }
@@ -76,13 +76,13 @@ void mat4EqExpect(const Mat4 actual, const Mat4 expected)
 }
 
 // Triggers a cr_assert assertion to fail if the matrices are not equal
-void mat4EqAssert(const Mat4 a, const Mat4 b)
+void mat4EqAssert(const Mat4 actual, const Mat4 expected)
 {
-    for (uint64_t row = 0; row < 4; row++)
+    for (size_t row = 0; row < 4; row++)
     {
-        for (uint64_t col = 0; col < 4; col++)
+        for (size_t col = 0; col < 4; col++)
         {
-            cr_assert_dbl(a[row][col], b[row][col]);
+            cr_assert_dbl(actual[row][col], expected[row][col]);
         }
     }
 }
