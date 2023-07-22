@@ -248,10 +248,10 @@ Test(matrix_operations, cofactor)
     cr_expect_dbl(mat3Cof(0, 0, matB), 56);
     cr_expect_dbl(mat3Cof(0, 1, matB), 12);
     cr_expect_dbl(mat3Cof(0, 2, matB), -46);
-    Mat4 matC = {{-2, -8, 3, 5},
-                 {-3, 1, 7, 3},
-                 {1, 2, -9, 6},
-                 {-6, 7, 7, -9}};
+    // Mat4 matC = {{-2, -8, 3, 5},
+    //              {-3, 1, 7, 3},
+    //              {1, 2, -9, 6},
+    //              {-6, 7, 7, -9}};
     // cr_expect_dbl(mat4Cof(0, 0, matC), 690);
     // cr_expect_dbl(mat4Cof(0, 0, matC), 690);
 }

@@ -11,7 +11,7 @@
 #include "vectors.h"
 
 // Adds two vectors
-Vec2 vec2Add(Vec2 a, Vec2 b)
+Vec2 vec2Add(const Vec2 a, const Vec2 b)
 {
     Vec2 result;
     result.x = a.x + b.x;
@@ -20,7 +20,7 @@ Vec2 vec2Add(Vec2 a, Vec2 b)
 }
 
 // Subtracts two vectors
-Vec2 vec2Sub(Vec2 a, Vec2 b)
+Vec2 vec2Sub(const Vec2 a, const Vec2 b)
 {
     Vec2 result;
     result.x = a.x - b.x;
@@ -29,7 +29,7 @@ Vec2 vec2Sub(Vec2 a, Vec2 b)
 }
 
 // Scalar-vector multiplication
-Vec2 vec2Mul(Vec2 a, double b)
+Vec2 vec2Mul(const Vec2 a, const double b)
 {
     Vec2 result;
     result.x = a.x * b;
@@ -38,7 +38,7 @@ Vec2 vec2Mul(Vec2 a, double b)
 }
 
 // Scalar-vector division
-Vec2 vec2Div(Vec2 a, double b)
+Vec2 vec2Div(const Vec2 a, const double b)
 {
     Vec2 result;
     result.x = a.x / b;
@@ -47,7 +47,7 @@ Vec2 vec2Div(Vec2 a, double b)
 }
 
 // Negates a vector
-Vec2 vec2Neg(Vec2 a)
+Vec2 vec2Neg(const Vec2 a)
 {
     Vec2 result;
     result.x = -a.x;
@@ -56,26 +56,26 @@ Vec2 vec2Neg(Vec2 a)
 }
 
 // Returns the magnitude of a vector
-double vec2Mag(Vec2 a)
+double vec2Mag(const Vec2 a)
 {
     return sqrt(a.x * a.x + a.y * a.y);
 }
 
 // TODO: Check generated assembly
 // Normalizes a vector
-Vec2 vec2Norm(Vec2 a)
+Vec2 vec2Norm(const Vec2 a)
 {
     return vec2Div(a, vec2Mag(a));
 }
 
 // Returns the dot product of two vectors
-double vec2Dot(Vec2 a, Vec2 b)
+double vec2Dot(const Vec2 a, const Vec2 b)
 {
     return a.x * b.x + a.y * b.y;
 }
 
 // Hadamard product of two vectors
-Vec2 vec2Prod(Vec2 a, Vec2 b)
+Vec2 vec2Prod(const Vec2 a, const Vec2 b)
 {
     Vec2 result;
     result.x = a.x * b.x;
@@ -84,7 +84,7 @@ Vec2 vec2Prod(Vec2 a, Vec2 b)
 }
 
 // Adds two vectors
-Vec3 vec3Add(Vec3 a, Vec3 b)
+Vec3 vec3Add(const Vec3 a, const Vec3 b)
 {
     Vec3 result;
     result.x = a.x + b.x;
@@ -94,7 +94,7 @@ Vec3 vec3Add(Vec3 a, Vec3 b)
 }
 
 // Subtracts two vectors
-Vec3 vec3Sub(Vec3 a, Vec3 b)
+Vec3 vec3Sub(const Vec3 a, const Vec3 b)
 {
     Vec3 result;
     result.x = a.x - b.x;
@@ -104,7 +104,7 @@ Vec3 vec3Sub(Vec3 a, Vec3 b)
 }
 
 // Scalar-vector multiplication
-Vec3 vec3Mul(Vec3 a, double b)
+Vec3 vec3Mul(const Vec3 a, const double b)
 {
     Vec3 result;
     result.x = a.x * b;
@@ -114,7 +114,7 @@ Vec3 vec3Mul(Vec3 a, double b)
 }
 
 // Scalar-vector division
-Vec3 vec3Div(Vec3 a, double b)
+Vec3 vec3Div(const Vec3 a, const double b)
 {
     Vec3 result;
     result.x = a.x / b;
@@ -134,25 +134,25 @@ Vec3 vec3Neg(Vec3 a)
 }
 
 // Returns the magnitude of a vector
-double vec3Mag(Vec3 a)
+double vec3Mag(const Vec3 a)
 {
     return sqrt(a.x * a.x + a.y * a.y + a.z * a.z);
 }
 
 // Normalizes a vector
-Vec3 vec3Norm(Vec3 a)
+Vec3 vec3Norm(const Vec3 a)
 {
     return vec3Div(a, vec3Mag(a));
 }
 
 // Returns the dot product of two vectors
-double vec3Dot(Vec3 a, Vec3 b)
+double vec3Dot(const Vec3 a, const Vec3 b)
 {
     return a.x * b.x + a.y * b.y + a.z * b.z;
 }
 
 // Cross product of two vectors
-Vec3 vec3Cross(Vec3 a, Vec3 b)
+Vec3 vec3Cross(const Vec3 a, const Vec3 b)
 {
     Vec3 result;
     result.x = a.y * b.z - a.z * b.y;
@@ -162,7 +162,7 @@ Vec3 vec3Cross(Vec3 a, Vec3 b)
 }
 
 // Hadamard product of two vectors
-Vec3 vec3Prod(Vec3 a, Vec3 b)
+Vec3 vec3Prod(const Vec3 a, const Vec3 b)
 {
     Vec3 result;
     result.x = a.x * b.x;
@@ -172,7 +172,7 @@ Vec3 vec3Prod(Vec3 a, Vec3 b)
 }
 
 // Adds two vectors
-Vec4 vec4Add(Vec4 a, Vec4 b)
+Vec4 vec4Add(const Vec4 a, const Vec4 b)
 {
     Vec4 result;
     result.x = a.x + b.x;
@@ -183,7 +183,7 @@ Vec4 vec4Add(Vec4 a, Vec4 b)
 }
 
 // Subtracts two vectors
-Vec4 vec4Sub(Vec4 a, Vec4 b)
+Vec4 vec4Sub(const Vec4 a, const Vec4 b)
 {
     Vec4 result;
     result.x = a.x - b.x;
@@ -194,7 +194,7 @@ Vec4 vec4Sub(Vec4 a, Vec4 b)
 }
 
 // Scalar-vector multiplication
-Vec4 vec4Mul(Vec4 a, double b)
+Vec4 vec4Mul(const Vec4 a, const double b)
 {
     Vec4 result;
     result.x = a.x * b;
@@ -205,7 +205,7 @@ Vec4 vec4Mul(Vec4 a, double b)
 }
 
 // Scalar-vector division
-Vec4 vec4Div(Vec4 a, double b)
+Vec4 vec4Div(const Vec4 a, const double b)
 {
     Vec4 result;
     result.x = a.x / b;
@@ -216,7 +216,7 @@ Vec4 vec4Div(Vec4 a, double b)
 }
 
 // Negates a vector
-Vec4 vec4Neg(Vec4 a)
+Vec4 vec4Neg(const Vec4 a)
 {
     Vec4 result;
     result.x = -a.x;
@@ -227,19 +227,19 @@ Vec4 vec4Neg(Vec4 a)
 }
 
 // Returns the magnitude of a vector
-double vec4Mag(Vec4 a)
+double vec4Mag(const Vec4 a)
 {
     return sqrt(a.x * a.x + a.y * a.y + a.z * a.z + a.w * a.w);
 }
 
 // Normalizes a vector
-Vec4 vec4Norm(Vec4 a)
+Vec4 vec4Norm(const Vec4 a)
 {
     return vec4Div(a, vec4Mag(a));
 }
 
 // Returns the dot product of two vectors
-double vec4Dot(Vec4 a, Vec4 b)
+double vec4Dot(const Vec4 a, const Vec4 b)
 {
     return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
 }
@@ -255,10 +255,9 @@ Vec4 vec4Prod(Vec4 a, Vec4 b)
     return result;
 }
 
-// TODO: Maybe add const to the arguments of the vector and matrix functions
 // TODO: Vectorize by treating the elements as vectors
 // Checks for equality of 2*2 matrices
-bool mat2Eq(Mat2 a, Mat2 b)
+bool mat2Eq(const Mat2 a, const Mat2 b)
 {
     for (int i = 0; i < 2; i++)
     {
@@ -274,7 +273,7 @@ bool mat2Eq(Mat2 a, Mat2 b)
 }
 
 // Checks for equality of 3*3 matrices
-bool mat3Eq(Mat3 a, Mat3 b)
+bool mat3Eq(const Mat3 a, const Mat3 b)
 {
     for (int i = 0; i < 3; i++)
     {
@@ -290,7 +289,7 @@ bool mat3Eq(Mat3 a, Mat3 b)
 }
 
 // Checks for equality of 4*4 matrices
-bool mat4Eq(Mat4 a, Mat4 b)
+bool mat4Eq(const Mat4 a, const Mat4 b)
 {
     for (int i = 0; i < 4; i++)
     {
@@ -307,7 +306,7 @@ bool mat4Eq(Mat4 a, Mat4 b)
 
 // TODO: Try vectorizing by accessing the columns
 // Multiplies two 2*2 matrices
-Mat2 mat2Mul(Mat2 a, Mat2 b)
+Mat2 mat2Mul(const Mat2 a, const Mat2 b)
 {
     Mat2 result;
     result.elem[0][0] = a.elem[0][0] * b.elem[0][0] + a.elem[0][1] * b.elem[1][0];
@@ -318,7 +317,7 @@ Mat2 mat2Mul(Mat2 a, Mat2 b)
 }
 
 // Multiplies two 3*3 matrices and stores the result
-Mat3 mat3Mul(Mat3 a, Mat3 b)
+Mat3 mat3Mul(const Mat3 a, const Mat3 b)
 {
     Mat3 result = {0};
     for (size_t row = 0; row < 3; row++)
@@ -335,7 +334,7 @@ Mat3 mat3Mul(Mat3 a, Mat3 b)
 }
 
 // Multiplies two 4*4 matrices
-Mat4 mat4Mul(Mat4 a, Mat4 b)
+Mat4 mat4Mul(const Mat4 a, const Mat4 b)
 {
     Mat4 result = {0};
     for (size_t row = 0; row < 4; row++)
@@ -352,7 +351,7 @@ Mat4 mat4Mul(Mat4 a, Mat4 b)
 }
 
 // Matrix-vector product
-Vec2 mat2VecMul(Mat2 mat, Vec2 vec)
+Vec2 mat2VecMul(const Mat2 mat, const Vec2 vec)
 {
     Vec2 result;
     result.x = vec.x * mat.elem[0][0] + vec.y * mat.elem[0][1];
@@ -361,7 +360,7 @@ Vec2 mat2VecMul(Mat2 mat, Vec2 vec)
 }
 
 // Matrix-vector product
-Vec3 mat3VecMul(Mat3 mat, Vec3 vec)
+Vec3 mat3VecMul(const Mat3 mat, const Vec3 vec)
 {
     Vec3 result;
     result.x = vec.x * mat.elem[0][0] + vec.y * mat.elem[0][1] + vec.z * mat.elem[0][2];
@@ -372,7 +371,7 @@ Vec3 mat3VecMul(Mat3 mat, Vec3 vec)
 
 // TODO: Check if the matrix can be accessed via its columns and thus vectorized
 // Matrix-vector product
-Vec4 mat4VecMul(Mat4 mat, Vec4 vec)
+Vec4 mat4VecMul(const Mat4 mat, const Vec4 vec)
 {
     Vec4 result;
     result.x = vec.x * mat.elem[0][0] + vec.y * mat.elem[0][1] + vec.z * mat.elem[0][2] + vec.w * mat.elem[0][3];
@@ -383,7 +382,7 @@ Vec4 mat4VecMul(Mat4 mat, Vec4 vec)
 }
 
 // Transposes a 3*3 matrix and stores the result
-Mat2 mat2Trans(Mat2 a)
+Mat2 mat2Trans(const Mat2 a)
 {
     Mat2 result;
     for (size_t i = 0; i < 2; i++) // NOTE: Consider unrolling
@@ -398,7 +397,7 @@ Mat2 mat2Trans(Mat2 a)
 }
 
 // Transposes a 3*3 matrix and stores the result
-Mat3 mat3Trans(Mat3 a)
+Mat3 mat3Trans(const Mat3 a)
 {
     Mat3 result;
     for (size_t i = 0; i < 3; i++) // NOTE: Consider skipping [0][0] and [2][2] and doing out of loop
@@ -413,7 +412,7 @@ Mat3 mat3Trans(Mat3 a)
 }
 
 // Transposes a 4*4 matrix and stores the result
-Mat4 mat4Trans(Mat4 a)
+Mat4 mat4Trans(const Mat4 a)
 {
     Mat4 result;
     for (size_t i = 0; i < 4; i++) // NOTE: Consider skipping [0][0] and [3][3] and doing out of loop
@@ -428,13 +427,13 @@ Mat4 mat4Trans(Mat4 a)
 }
 
 // Determinant of a 2*2 matrix
-double mat2Det(Mat2 a)
+double mat2Det(const Mat2 a)
 {
     return a.elem[0][0] * a.elem[1][1] - a.elem[1][0] * a.elem[0][1];
 }
 
 // Submatrix of a 3*3 matrix
-Mat2 mat3SubM(size_t row, size_t col, Mat3 a)
+Mat2 mat3SubM(const size_t row, const size_t col, const Mat3 a)
 {
     size_t skipRow = 0;
     size_t skipCol = 0;
@@ -467,7 +466,7 @@ Mat2 mat3SubM(size_t row, size_t col, Mat3 a)
 }
 
 // Submatrix of a 4*4 matrix
-Mat3 mat4SubM(size_t row, size_t col, Mat4 a)
+Mat3 mat4SubM(const size_t row, const size_t col, const Mat4 a)
 {
     size_t skipRow = 0;
     size_t skipCol = 0;
@@ -500,13 +499,13 @@ Mat3 mat4SubM(size_t row, size_t col, Mat4 a)
 }
 
 // Calculates the minor of a 3*3 matrix
-double mat3Min(size_t row, size_t col, Mat3 a)
+double mat3Min(const size_t row, const size_t col, const Mat3 a)
 {
     return mat2Det(mat3SubM(row, col, a));
 }
 
 // Calculates the cofactor of a 3*3 matrix
-double mat3Cof(size_t row, size_t col, Mat3 a)
+double mat3Cof(const size_t row, const size_t col, const Mat3 a)
 {
     if (row % 2 != col % 2)
     {
@@ -520,7 +519,7 @@ double mat3Cof(size_t row, size_t col, Mat3 a)
 
 // TODO: Try doing non-recursively
 // Calculates the determinant of a 3*3 matrix
-double mat3Det(Mat3 a)
+double mat3Det(const Mat3 a)
 {
     double determinant = 0;
     for (size_t col = 0; col < 3; col++)
@@ -531,13 +530,13 @@ double mat3Det(Mat3 a)
 }
 
 // Calculates the minor of a 4*4 matrix
-double mat4Min(size_t row, size_t col, Mat4 a)
+double mat4Min(const size_t row, const size_t col, const Mat4 a)
 {
     return mat3Det(mat4SubM(row, col, a));
 }
 
 // Calculates the cofactor of a 3*3 matrix
-double mat4Cof(size_t row, size_t col, Mat4 a)
+double mat4Cof(const size_t row, const size_t col, const Mat4 a)
 {
     if (row % 2 != col % 2)
     {
@@ -550,7 +549,7 @@ double mat4Cof(size_t row, size_t col, Mat4 a)
 }
 
 // Calculates the determinant of a 4*4 matrix
-double mat4Det(Mat4 a)
+double mat4Det(const Mat4 a)
 {
     double determinant = 0;
     for (size_t col = 0; col < 4; col++)
@@ -563,7 +562,7 @@ double mat4Det(Mat4 a)
 // TODO: Optimize
 // Inverts a 4*4 matrix
 // Important: Only pass invertible matrices
-Mat4 mat4Inv(Mat4 a)
+Mat4 mat4Inv(const Mat4 a)
 {
     double determinant = mat4Det(a);
     Mat4 inverted;

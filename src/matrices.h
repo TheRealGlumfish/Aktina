@@ -8,7 +8,7 @@
 #define MATRICES_H
 
 #include <stdbool.h>
-#include <stdint.h>
+#include <stddef.h>
 
 #include "tuples.h"
 
@@ -30,9 +30,9 @@ void mat4Trans(Mat4 dest, const Mat4 a);
 
 double mat2Det(const Mat2 a);
 
-void mat3SubM(Mat2 dest, const uint64_t row, const uint64_t col, const Mat3 a);
-void mat4SubM(Mat3 dest, const uint64_t row, const uint64_t col, const Mat4 a);
-double mat3Min(const uint64_t row, uint64_t col, const Mat3 a);
-double mat3Cof(const uint64_t row, uint64_t col, const Mat3 a);
+void mat3SubM(Mat2 dest, size_t row, size_t col, const Mat3 a);
+void mat4SubM(Mat3 dest, size_t row, size_t col, const Mat4 a);
+double mat3Min(size_t row, size_t col, const Mat3 a);
+double mat3Cof(size_t row, size_t col, const Mat3 a);
 
 #endif

@@ -4,7 +4,6 @@
  * Copyright (c) 2023, Dimitrios Alexopoulos All rights reserved.
  */
 
-#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,13 +13,13 @@
 
 struct Canvas_s
 {
-    uint64_t width; // TODO: Potentially change to uint_fast16_t
-    uint64_t height;
+    size_t width;
+    size_t height;
     Tuple *pixelCanvas;
 };
 
 // Canvas constructor and initializer
-Canvas *canvasCreate(const uint64_t width, const uint64_t height)
+Canvas *canvasCreate(const size_t width, const size_t height)
 {
     Canvas *canvas = malloc(sizeof(Canvas));
     if (canvas == NULL)
@@ -34,9 +33,9 @@ Canvas *canvasCreate(const uint64_t width, const uint64_t height)
     {
         abort();
     }
-    for (uint64_t i = 0; i < width; i++)
+    for (size_t i = 0; i < width; i++)
     {
-        for (uint64_t j = 0; j < height; j++)
+        for (size_t j = 0; j < height; j++)
         {
             canvas->pixelCanvas[i + j * canvas->width] = color(0, 0, 0);
         }
@@ -54,7 +53,7 @@ void canvasDestroy(Canvas *canvas)
 }
 
 // Canvas copy constructor
-Canvas *canvasCopy(Canvas *canvas)
+Canvas *canvasCopy(const Canvas *canvas)
 {
     Canvas *copyCanvas = malloc(sizeof(Canvas));
     if (copyCanvas == NULL)
@@ -73,34 +72,34 @@ Canvas *canvasCopy(Canvas *canvas)
 }
 
 // Returns the specified pixel from the canvas
-Tuple canvasPixel(Canvas *canvas, const uint64_t x, const uint64_t y)
+Tuple canvasPixel(const Canvas *canvas, const size_t x, const size_t y)
 {
     return canvas->pixelCanvas[x + y * canvas->width];
 }
 
 // Sets the specified pixel on the canvas
-void canvasPixelWrite(Canvas *canvas, const uint64_t x, const uint64_t y, const Tuple pixel)
+void canvasPixelWrite(Canvas *canvas, const size_t x, const size_t y, const Tuple pixel)
 {
     canvas->pixelCanvas[x + y * canvas->width] = pixel;
 }
 
 // Returns the canvas width
-uint64_t canvasWidth(Canvas *canvas)
+size_t canvasWidth(const Canvas *canvas)
 {
     return canvas->width;
 }
 
 // Returns the canvas height
-uint64_t canvasHeight(Canvas *canvas)
+size_t canvasHeight(const Canvas *canvas)
 {
     return canvas->height;
 }
 
 // Returns a string with the canvas in PPM format
-char *canvasPPM(Canvas *canvas)
+char *canvasPPM(const Canvas *canvas)
 {
     Canvas *PPMCanvas = canvasCopy(canvas);
-    for (uint64_t i = 0; i < canvasWidth(PPMCanvas) * canvasHeight(PPMCanvas); i++)
+    for (size_t i = 0; i < canvasWidth(PPMCanvas) * canvasHeight(PPMCanvas); i++)
     {
         PPMCanvas->pixelCanvas[i] = tuplePPM(PPMCanvas->pixelCanvas[i]);
     }
@@ -112,10 +111,10 @@ char *canvasPPM(Canvas *canvas)
         abort();
     }
     char *bufferPtr = buffer + sprintf(buffer, "P3\n%lu %lu\n255\n", canvasWidth(PPMCanvas), canvasHeight(PPMCanvas));
-    for (uint64_t j = 0; j < canvasHeight(PPMCanvas); j++)
+    for (size_t j = 0; j < canvasHeight(PPMCanvas); j++)
     {
-        // uint64_t lineWidth = 1;
-        for (uint64_t i = 0; i < canvasWidth(PPMCanvas); i++)
+        // size_t lineWidth = 1;
+        for (size_t i = 0; i < canvasWidth(PPMCanvas); i++)
         {
             if (i == (canvasWidth(PPMCanvas) - 1) /* || lineWidth == 61*/)
             {
