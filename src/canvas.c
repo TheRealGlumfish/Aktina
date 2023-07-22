@@ -29,7 +29,7 @@ Canvas *canvasCreate(const uint64_t width, const uint64_t height)
     }
     canvas->width = width;
     canvas->height = height;
-    canvas->pixelCanvas = malloc(sizeof(Tuple) * width * height);
+    canvas->pixelCanvas = malloc(sizeof(Tuple[width * height]));
     if (canvas->pixelCanvas == NULL)
     {
         abort();
@@ -61,14 +61,14 @@ Canvas *canvasCopy(Canvas *canvas)
     {
         abort();
     }
-    copyCanvas->pixelCanvas = malloc(sizeof(Tuple) * canvas->width * canvas->height);
+    copyCanvas->pixelCanvas = malloc(sizeof(Tuple[canvas->width * canvas->height]));
     if (copyCanvas->pixelCanvas == NULL)
     {
         abort();
     }
     copyCanvas->width = canvas->width;
     copyCanvas->height = canvas->height;
-    memcpy(copyCanvas->pixelCanvas, canvas->pixelCanvas, sizeof(Tuple) * canvas->width * canvas->height);
+    memcpy(copyCanvas->pixelCanvas, canvas->pixelCanvas, sizeof(Tuple[canvas->width * canvas->height]));
     return copyCanvas;
 }
 

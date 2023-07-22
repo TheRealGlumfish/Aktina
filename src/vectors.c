@@ -517,3 +517,62 @@ double mat3Cof(size_t row, size_t col, Mat3 a)
         return mat3Min(row, col, a);
     }
 }
+
+// TODO: Try doing non-recursively
+// Calculates the determinant of a 3*3 matrix
+double mat3Det(Mat3 a)
+{
+    double determinant = 0;
+    for (size_t col = 0; col < 3; col++)
+    {
+        determinant += a.elem[0][col] * mat3Cof(0, col, a);
+    }
+    return determinant;
+}
+
+// Calculates the minor of a 4*4 matrix
+double mat4Min(size_t row, size_t col, Mat4 a)
+{
+    return mat3Det(mat4SubM(row, col, a));
+}
+
+// Calculates the cofactor of a 3*3 matrix
+double mat4Cof(size_t row, size_t col, Mat4 a)
+{
+    if (row % 2 != col % 2)
+    {
+        return -mat4Min(row, col, a);
+    }
+    else
+    {
+        return mat4Min(row, col, a);
+    }
+}
+
+// Calculates the determinant of a 4*4 matrix
+double mat4Det(Mat4 a)
+{
+    double determinant = 0;
+    for (size_t col = 0; col < 4; col++)
+    {
+        determinant += a.elem[0][col] * mat4Cof(0, col, a);
+    }
+    return determinant;
+}
+
+// TODO: Optimize
+// Inverts a 4*4 matrix
+// Important: Only pass invertible matrices
+Mat4 mat4Inv(Mat4 a)
+{
+    double determinant = mat4Det(a);
+    Mat4 inverted;
+    for (size_t col = 0; col < 4; col++)
+    {
+        for (size_t row = 0; row < 4; row++)
+        {
+            inverted.elem[col][row] = mat4Cof(row, col, a) / determinant;
+        }
+    }
+    return inverted;
+}

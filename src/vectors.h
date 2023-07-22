@@ -64,19 +64,19 @@ typedef union Vec4
 typedef union Mat2
 {
     double elem[2][2];
-    Vec2 cols[2];
+    Vec2 rows[2];
 } Mat2;
 
 typedef union Mat3
 {
     double elem[3][3];
-    Vec3 cols[3];
+    Vec3 rows[3];
 } Mat3;
 
 typedef union Mat4
 {
     double elem[4][4];
-    Vec4 cols[4];
+    Vec4 rows[4];
 } Mat4;
 
 Vec2 vec2Add(Vec2 a, Vec2 b);
@@ -129,11 +129,18 @@ Mat3 mat3Trans(Mat3 a);
 Mat4 mat4Trans(Mat4 a);
 
 double mat2Det(Mat2 a);
+double mat3Det(Mat3 a);
+double mat4Det(Mat4 a);
 
 Mat2 mat3SubM(size_t row, size_t col, Mat3 a);
 Mat3 mat4SubM(size_t row, size_t col, Mat4 a);
 
 double mat3Min(size_t row, size_t col, Mat3 a);
+double mat4Min(size_t row, size_t col, Mat4 a);
+
 double mat3Cof(size_t row, size_t col, Mat3 a);
+double mat4Cof(size_t row, size_t col, Mat4 a);
+
+Mat4 mat4Inv(Mat4 a);
 
 #endif

@@ -255,7 +255,3 @@ Test(matrix_operations, cofactor)
     // cr_expect_dbl(mat4Cof(0, 0, matC), 690);
     // cr_expect_dbl(mat4Cof(0, 0, matC), 690);
 }
-
-Test(matrix_operations, determinant)
-{
-}
