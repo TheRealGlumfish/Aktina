@@ -9,75 +9,57 @@
 #include <string.h>
 
 #include "canvas.h"
-#include "tuples.h"
+#include "vectors.h"
 
 // TODO: Use [Static 1] syntax for Canvas *
-// TODO: Replace Tuple with Vec3
-// TODO: Consider replacing pixelCanvas with a flexible array member
 struct Canvas_s
 {
     size_t width;
     size_t height;
-    Tuple *pixelCanvas;
+    Vec3 pixelCanvas[];
 };
 
 // Canvas constructor and initializer
+// Important: If the allocation fails, NULL is returned
 Canvas *canvasCreate(const size_t width, const size_t height)
 {
-    Canvas *canvas = malloc(sizeof(Canvas));
+    Canvas *canvas = malloc(sizeof(Canvas) + sizeof(Vec3[width * height]));
     if (canvas == NULL)
     {
-        abort();
+        return canvas;
     }
-    *canvas = (Canvas){width, height, malloc(sizeof(Tuple[width * height]))};
-    if (canvas->pixelCanvas == NULL)
-    {
-        abort();
-    }
+    *canvas = (Canvas){width, height};
     for (size_t i = 0; i < width; i++)
     {
         for (size_t j = 0; j < height; j++)
         {
-            canvas->pixelCanvas[i + j * canvas->width] = color(0, 0, 0); // TODO: Use memset
+            canvas->pixelCanvas[i + j * canvas->width] = (Vec3){{0, 0, 0}}; // TODO: Use memset
         }
     }
     return canvas;
 }
 
-// Canvas destructor
-void canvasDestroy(Canvas *canvas)
-{
-    free(canvas->pixelCanvas);
-    canvas->pixelCanvas = NULL;
-    free(canvas);
-    canvas = NULL;
-}
-
 // Canvas copy constructor
+// Important: If the allocation fails, NULL is returned
 Canvas *canvasCopy(const Canvas *canvas)
 {
-    Canvas *copyCanvas = malloc(sizeof(Canvas));
+    Canvas *copyCanvas = malloc(sizeof(Canvas) + sizeof(Vec3[canvas->width * canvas->height]));
     if (copyCanvas == NULL)
     {
-        abort();
+        return copyCanvas;
     }
-    *copyCanvas = (Canvas){canvas->width, canvas->height, malloc(sizeof(Tuple[canvas->width * canvas->height]))};
-    if (copyCanvas->pixelCanvas == NULL)
-    {
-        abort();
-    }
-    memcpy(copyCanvas->pixelCanvas, canvas->pixelCanvas, sizeof(Tuple[canvas->width * canvas->height]));
+    memcpy(copyCanvas, canvas, sizeof(Canvas) + sizeof(Vec3[canvas->width * canvas->height]));
     return copyCanvas;
 }
 
 // Returns the specified pixel from the canvas
-Tuple canvasPixel(const Canvas *canvas, const size_t x, const size_t y)
+Vec3 canvasPixel(const Canvas *canvas, const size_t x, const size_t y)
 {
     return canvas->pixelCanvas[x + y * canvas->width];
 }
 
 // Sets the specified pixel on the canvas
-void canvasPixelWrite(Canvas *canvas, const size_t x, const size_t y, const Tuple pixel)
+void canvasPixelWrite(Canvas *canvas, const size_t x, const size_t y, const Vec3 pixel)
 {
     canvas->pixelCanvas[x + y * canvas->width] = pixel;
 }
@@ -100,7 +82,7 @@ char *canvasPPM(const Canvas *canvas)
     Canvas *PPMCanvas = canvasCopy(canvas);
     for (size_t i = 0; i < canvasWidth(PPMCanvas) * canvasHeight(PPMCanvas); i++)
     {
-        PPMCanvas->pixelCanvas[i] = tuplePPM(PPMCanvas->pixelCanvas[i]);
+        PPMCanvas->pixelCanvas[i] = vec3PPM(PPMCanvas->pixelCanvas[i]);
     }
     size_t bufferSize = sizeof(char) * snprintf(NULL, 0, "P3\n%lu %lu\n255\n", canvasWidth(PPMCanvas), canvasHeight(PPMCanvas));
     bufferSize += sizeof(char) * 4 * 3 * canvasWidth(PPMCanvas) * canvasHeight(PPMCanvas);
@@ -141,7 +123,8 @@ char *canvasPPM(const Canvas *canvas)
         }
     }
     *(bufferPtr - 1) = '\0';
-    canvasDestroy(PPMCanvas);
+    free(PPMCanvas);
+    PPMCanvas = NULL;
     return buffer;
 }
 

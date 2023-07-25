@@ -7,7 +7,7 @@ criterion_dep = dependency('criterion', required : false)
 
 if criterion_dep.found()
   tuples_test = executable('tuples_tests', ['src/tuples.c', 'test/tuples_test.c'], dependencies : [m_dep, criterion_dep])
-  canvas_test = executable('canvas_tests', ['src/canvas.c', 'test/canvas_test.c', 'src/tuples.c'], dependencies : [m_dep, criterion_dep])
+  canvas_test = executable('canvas_tests', ['src/canvas.c', 'test/canvas_test.c', 'src/vectors.c'], dependencies : [m_dep, criterion_dep])
   matrices_test = executable('matrices_tests', ['src/matrices.c', 'test/matrices_test.c', 'src/tuples.c'], dependencies : [m_dep, criterion_dep])
   vectors_test = executable('vectors_tests', ['src/vectors.c', 'test/vectors_test.c'], dependencies : [m_dep, criterion_dep])
   test('Tuple operations', tuples_test,

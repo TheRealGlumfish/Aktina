@@ -172,6 +172,16 @@ Vec3 vec3Prod(const Vec3 a, const Vec3 b)
     return result;
 }
 
+// Scales and limits the value of the tuple to be between 0-255 so it can be used in a PPM file
+Vec3 vec3PPM(const Vec3 a)
+{
+    Vec3 result;
+    result.x = fmin(fmax(0, a.x * PPM_DEPTH), PPM_DEPTH);
+    result.y = fmin(fmax(0, a.y * PPM_DEPTH), PPM_DEPTH);
+    result.z = fmin(fmax(0, a.z * PPM_DEPTH), PPM_DEPTH);
+    return result;
+}
+
 // Adds two vectors
 Vec4 vec4Add(const Vec4 a, const Vec4 b)
 {

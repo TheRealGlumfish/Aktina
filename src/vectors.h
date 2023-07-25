@@ -12,12 +12,13 @@
 #include <stddef.h>
 
 #define MAT_EPSILON 0.00001
+#define PPM_DEPTH 255
 // clang-format off
 #define point(x, y, z) (Vec4){{x, y, z, 1}}
 
 #define vector(x, y, z) (Vec4){{x, y, z, 0}}
 
-#define color(x, y, z) (Vec4){{x, y, z, 0}}
+#define color(red, green, blue) (Vec3){{red, green, blue}}
 
 #define IDENTITY (Mat4){{{1, 0, 0, 0},\
                          {0, 1, 0, 0},\
@@ -144,6 +145,8 @@ Vec3 vec3Norm(Vec3 a);
 double vec3Dot(Vec3 a, Vec3 b);
 Vec3 vec3Cross(Vec3 a, Vec3 b);
 Vec3 vec3Prod(Vec3 a, Vec3 b);
+
+Vec3 vec3PPM(const Vec3 a);
 
 Vec4 vec4Add(Vec4 a, Vec4 b);
 Vec4 vec4Sub(Vec4 a, Vec4 b);

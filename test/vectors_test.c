@@ -253,6 +253,19 @@ Test(vector_operations, vector_cross_product)
     cr_expect_vec3_eq(vec3Cross(vecC, vecD), vecF);
 }
 
+Test(vector_operations, vector_ppm)
+{
+    cr_expect_dbl(round(vec3PPM(color(1.5, 0, 0)).x), (color(255, 0, 0)).x);
+    cr_expect_dbl(round(vec3PPM(color(1.5, 0, 0)).y), (color(255, 0, 0)).y);
+    cr_expect_dbl(round(vec3PPM(color(1.5, 0, 0)).z), (color(255, 0, 0)).z);
+    cr_expect_dbl(round(vec3PPM(color(0, 0.5, 0)).x), (color(0, 128, 0)).x);
+    cr_expect_dbl(round(vec3PPM(color(0, 0.5, 0)).y), (color(0, 128, 0)).y);
+    cr_expect_dbl(round(vec3PPM(color(0, 0.5, 0)).z), (color(0, 128, 0)).z);
+    cr_expect_dbl(round(vec3PPM(color(-0.5, 0, 1)).x), (color(0, 0, 255)).x);
+    cr_expect_dbl(round(vec3PPM(color(-0.5, 0, 1)).y), (color(0, 0, 255)).y);
+    cr_expect_dbl(round(vec3PPM(color(-0.5, 0, 1)).z), (color(0, 0, 255)).z);
+}
+
 Test(matrix_operations, matrix_multiply)
 {
     // TODO: Add unit tests for Mat2 and Mat3 types
