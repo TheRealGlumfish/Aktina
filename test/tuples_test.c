@@ -11,8 +11,14 @@
 #include "src/tuples.h"
 
 #define EPSILON 0.00001
-#define cr_expect_tuple_eq(actual, expected) cr_expect(all(epsilon_eq(dbl, actual.x, expected.x, EPSILON), epsilon_eq(dbl, actual.y, expected.y, EPSILON), epsilon_eq(actual.z, expected.z, EPSILON), eq(dbl, actual.w, expected.w, EPSILON)))
-#define cr_assert_tuple_eq(actual, expected) cr_assert(all(epsilon_eq(dbl, actual.x, expected.x, EPSILON), epsilon_eq(dbl, actual.y, expected.y, EPSILON), epsilon_eq(actual.z, expected.z, EPSILON), eq(dbl, actual.w, expected.w, EPSILON)))
+#define cr_expect_tuple_eq(actual, expected) cr_expect(all(epsilon_eq(dbl, actual.x, expected.x, EPSILON), \
+                                                           epsilon_eq(dbl, actual.y, expected.y, EPSILON), \
+                                                           epsilon_eq(dbl, actual.z, expected.z, EPSILON), \
+                                                           epsilon_eq(dbl, actual.w, expected.w, EPSILON)))
+#define cr_assert_tuple_eq(actual, expected) cr_assert(all(epsilon_eq(dbl, actual.x, expected.x, EPSILON), \
+                                                           epsilon_eq(dbl, actual.y, expected.y, EPSILON), \
+                                                           epsilon_eq(dbl, actual.z, expected.z, EPSILON), \
+                                                           epsilon_eq(dbl, actual.w, expected.w, EPSILON)))
 // TODO: Add cr_expect_dbl macro from matrices_tests.c
 
 Test(tuple_operations, point_and_vector)

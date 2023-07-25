@@ -11,6 +11,9 @@
 #include "canvas.h"
 #include "tuples.h"
 
+// TODO: Use [Static 1] syntax for Canvas *
+// TODO: Replace Tuple with Vec3
+// TODO: Consider replacing pixelCanvas with a flexible array member
 struct Canvas_s
 {
     size_t width;
@@ -26,9 +29,7 @@ Canvas *canvasCreate(const size_t width, const size_t height)
     {
         abort();
     }
-    canvas->width = width;
-    canvas->height = height;
-    canvas->pixelCanvas = malloc(sizeof(Tuple[width * height]));
+    *canvas = (Canvas){width, height, malloc(sizeof(Tuple[width * height]))};
     if (canvas->pixelCanvas == NULL)
     {
         abort();
@@ -37,7 +38,7 @@ Canvas *canvasCreate(const size_t width, const size_t height)
     {
         for (size_t j = 0; j < height; j++)
         {
-            canvas->pixelCanvas[i + j * canvas->width] = color(0, 0, 0);
+            canvas->pixelCanvas[i + j * canvas->width] = color(0, 0, 0); // TODO: Use memset
         }
     }
     return canvas;
@@ -60,13 +61,11 @@ Canvas *canvasCopy(const Canvas *canvas)
     {
         abort();
     }
-    copyCanvas->pixelCanvas = malloc(sizeof(Tuple[canvas->width * canvas->height]));
+    *copyCanvas = (Canvas){canvas->width, canvas->height, malloc(sizeof(Tuple[canvas->width * canvas->height]))};
     if (copyCanvas->pixelCanvas == NULL)
     {
         abort();
     }
-    copyCanvas->width = canvas->width;
-    copyCanvas->height = canvas->height;
     memcpy(copyCanvas->pixelCanvas, canvas->pixelCanvas, sizeof(Tuple[canvas->width * canvas->height]));
     return copyCanvas;
 }

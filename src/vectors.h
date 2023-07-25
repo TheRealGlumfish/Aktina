@@ -1,5 +1,5 @@
 /*
- * vectors.h - Vector and matrix implementation
+ * vectors.h - Vector, matrix and transformation implementation
  *
  * Copyright (c) 2023, Dimitrios Alexopoulos All rights reserved.
  */
@@ -7,10 +7,53 @@
 #ifndef VECTORS_H
 #define VECTORS_H
 
-#define MAT_EPSILON 0.00001
-
+#include <math.h>
 #include <stdbool.h>
 #include <stddef.h>
+
+#define MAT_EPSILON 0.00001
+// clang-format off
+#define point(x, y, z) (Vec4){{x, y, z, 1}}
+
+#define vector(x, y, z) (Vec4){{x, y, z, 0}}
+
+#define color(x, y, z) (Vec4){{x, y, z, 0}}
+
+#define IDENTITY (Mat4){{{1, 0, 0, 0},\
+                         {0, 1, 0, 0},\
+                         {0, 0, 1, 0},\
+                         {0, 0, 0, 1}}}
+
+#define translation(x, y, z) (Mat4){{{1, 0, 0, x},\
+                                     {0, 1, 0, y},\
+                                     {0, 0, 1, z},\
+                                     {0, 0, 0, 1}}}
+
+#define scaling(x, y, z) (Mat4){{{x, 0, 0, 0},\
+                                 {0, y, 0, 0},\
+                                 {0, 0, z, 0},\
+                                 {0, 0, 0, 1}}}
+
+#define rotationX(r) (Mat4){{{1,      0,       0, 0},\
+                             {0, cos(r), -sin(r), 0},\
+                             {0, sin(r),  cos(r), 0},\
+                             {0,      0,       0, 1}}}
+
+#define rotationY(r) (Mat4){{{cos(r),       0, sin(r), 0},\
+                             {     0,       1,      0, 0},\
+                             {     0, -sin(r), cos(r), 0},\
+                             {     0,       0,      0, 1}}}
+
+#define rotationZ(r) (Mat4){{{cos(r), -sin(r), 0, 0},\
+                             {sin(r),  cos(r), 0, 0},\
+                             {     0,       0, 1, 0},\
+                             {     0,       0, 0, 1}}}
+
+#define shearing(xy, xz, yx, yz, zx, zy) (Mat4){{{ 1, xy, xz, 0},\
+                                                 {yx,  1, yz, 0},\
+                                                 {zx, zy,  1, 0},\
+                                                 { 0,  0,  0, 1}}}
+// clang-format on
 
 typedef union Vec2
 {

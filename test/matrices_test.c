@@ -10,10 +10,20 @@
 #include "src/matrices.h"
 
 #define EPSILON 0.00001
+
 #define cr_expect_dbl(actual, expected) cr_expect(epsilon_eq(dbl, actual, expected, EPSILON))
+
 #define cr_assert_dbl(actual, expected) cr_assert(epsilon_eq(dbl, actual, expected, EPSILON))
-#define cr_expect_tuple_eq(actual, expected) cr_expect(all(epsilon_eq(dbl, actual.x, expected.x, EPSILON), epsilon_eq(dbl, actual.y, expected.y, EPSILON), epsilon_eq(actual.z, expected.z, EPSILON), eq(dbl, actual.w, expected.w, EPSILON)))
-#define cr_assert_tuple_eq(actual, expected) cr_assert(all(epsilon_eq(dbl, actual.x, expected.x, EPSILON), epsilon_eq(dbl, actual.y, expected.y, EPSILON), epsilon_eq(actual.z, expected.z, EPSILON), eq(dbl, actual.w, expected.w, EPSILON)))
+
+#define cr_expect_tuple_eq(actual, expected) cr_expect(all(epsilon_eq(dbl, actual.x, expected.x, EPSILON), \
+                                                           epsilon_eq(dbl, actual.y, expected.y, EPSILON), \
+                                                           epsilon_eq(dbl, actual.z, expected.z, EPSILON), \
+                                                           epsilon_eq(dbl, actual.w, expected.w, EPSILON)))
+
+#define cr_assert_tuple_eq(actual, expected) cr_assert(all(epsilon_eq(dbl, actual.x, expected.x, EPSILON), \
+                                                           epsilon_eq(dbl, actual.y, expected.y, EPSILON), \
+                                                           epsilon_eq(dbl, actual.z, expected.z, EPSILON), \
+                                                           epsilon_eq(dbl, actual.w, expected.w, EPSILON)))
 
 // Triggers a cr_expect assertion to fail if the matrices are not equal
 void mat2EqExpect(const Mat2 actual, const Mat2 expected)

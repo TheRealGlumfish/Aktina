@@ -19,7 +19,7 @@ if criterion_dep.found()
   test('Matrix operations', matrices_test,
     protocol : 'tap', args : ['--tap', '--always-succeed', '-j0'],
     env : ['LSAN_OPTIONS=suppressions=../LSAN-suppressions.txt,print_suppressions=0'])
-  test('Vector operations', vectors_test,
+  test('Vector, matrix and transformation operations', vectors_test,
     protocol : 'tap', args : ['--tap', '--always-succeed', '-j0'],
     env : ['LSAN_OPTIONS=suppressions=../LSAN-suppressions.txt,print_suppressions=0'])
 endif

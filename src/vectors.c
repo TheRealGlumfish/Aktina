@@ -1,5 +1,5 @@
 /*
- * vectors.c - Vector and matrix implementation
+ * vectors.c - Vector, matrix and transformation implementation
  *
  * Copyright (c) 2023, Dimitrios Alexopoulos All rights reserved.
  */
@@ -10,6 +10,7 @@
 
 #include "vectors.h"
 
+// TODO: Consider using compound literals as in "tuples.c"
 // Adds two vectors
 Vec2 vec2Add(const Vec2 a, const Vec2 b)
 {

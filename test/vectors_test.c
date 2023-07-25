@@ -1,8 +1,16 @@
 /*
- * vectors_test.c - Tests on vector and matrix implementation
+ * vectors_test.c - Tests on vector, matrix and transformation implementation
  *
  * Copyright (c) 2023, Dimitrios Alexopoulos All rights reserved.
  */
+
+// TODO: Find a better solution than _XOPEN_SOURCE
+#ifdef _WIN32
+#define _USE_MATH_DEFINES
+#endif
+#ifdef __unix__
+#define _XOPEN_SOURCE
+#endif
 
 #include <criterion/criterion.h>
 #include <criterion/new/assert.h>
@@ -11,14 +19,54 @@
 #include "src/vectors.h"
 
 #define EPSILON 0.00001
+
 #define cr_expect_dbl(actual, expected) cr_expect(epsilon_eq(dbl, actual, expected, EPSILON))
+
 #define cr_assert_dbl(actual, expected) cr_assert(epsilon_eq(dbl, actual, expected, EPSILON))
-#define cr_expect_vec2_eq(actual, expected) cr_expect(all(epsilon_eq(dbl, actual.x, expected.x, EPSILON), epsilon_eq(dbl, actual.y, expected.y, EPSILON)))
-#define cr_assert_vec2_eq(actual, expected) cr_assert(all(epsilon_eq(dbl, actual.x, expected.x, EPSILON), epsilon_eq(dbl, actual.y, expected.y, EPSILON)))
-#define cr_expect_vec3_eq(actual, expected) cr_expect(all(epsilon_eq(dbl, actual.x, expected.x, EPSILON), epsilon_eq(dbl, actual.y, expected.y, EPSILON), epsilon_eq(actual.z, expected.z, EPSILON)))
-#define cr_assert_vec3_eq(actual, expected) cr_assert(all(epsilon_eq(dbl, actual.x, expected.x, EPSILON), epsilon_eq(dbl, actual.y, expected.y, EPSILON), epsilon_eq(actual.z, expected.z, EPSILON)))
-#define cr_expect_vec4_eq(actual, expected) cr_expect(all(epsilon_eq(dbl, actual.x, expected.x, EPSILON), epsilon_eq(dbl, actual.y, expected.y, EPSILON), epsilon_eq(actual.z, expected.z, EPSILON), eq(dbl, actual.w, expected.w, EPSILON)))
-#define cr_assert_vec4_eq(actual, expected) cr_assert(all(epsilon_eq(dbl, actual.x, expected.x, EPSILON), epsilon_eq(dbl, actual.y, expected.y, EPSILON), epsilon_eq(actual.z, expected.z, EPSILON), eq(dbl, actual.w, expected.w, EPSILON)))
+
+#define cr_expect_point_eq(actual, a, b, c) cr_expect(all(epsilon_eq(dbl, actual.x, a, EPSILON), \
+                                                          epsilon_eq(dbl, actual.y, b, EPSILON), \
+                                                          epsilon_eq(dbl, actual.z, c, EPSILON), \
+                                                          epsilon_eq(dbl, actual.w, 1, EPSILON)))
+
+#define cr_assert_point_eq(actual, a, b, c) cr_assert(all(epsilon_eq(dbl, actual.x, a, EPSILON), \
+                                                          epsilon_eq(dbl, actual.y, b, EPSILON), \
+                                                          epsilon_eq(dbl, actual.z, c, EPSILON), \
+                                                          epsilon_eq(dbl, actual.w, 1, EPSILON)))
+
+#define cr_expect_vector_eq(actual, a, b, c) cr_expect(all(epsilon_eq(dbl, actual.x, a, EPSILON), \
+                                                           epsilon_eq(dbl, actual.y, b, EPSILON), \
+                                                           epsilon_eq(dbl, actual.z, c, EPSILON), \
+                                                           epsilon_eq(dbl, actual.w, 0, EPSILON)))
+
+#define cr_assert_vector_eq(actual, a, b, c) cr_assert(all(epsilon_eq(dbl, actual.x, a, EPSILON), \
+                                                           epsilon_eq(dbl, actual.y, b, EPSILON), \
+                                                           epsilon_eq(dbl, actual.z, c, EPSILON), \
+                                                           epsilon_eq(dbl, actual.w, 0, EPSILON)))
+
+#define cr_expect_vec2_eq(actual, expected) cr_expect(all(epsilon_eq(dbl, actual.x, expected.x, EPSILON), \
+                                                          epsilon_eq(dbl, actual.y, expected.y, EPSILON)))
+
+#define cr_assert_vec2_eq(actual, expected) cr_assert(all(epsilon_eq(dbl, actual.x, expected.x, EPSILON), \
+                                                          epsilon_eq(dbl, actual.y, expected.y, EPSILON)))
+
+#define cr_expect_vec3_eq(actual, expected) cr_expect(all(epsilon_eq(dbl, actual.x, expected.x, EPSILON), \
+                                                          epsilon_eq(dbl, actual.y, expected.y, EPSILON), \
+                                                          epsilon_eq(dbl, actual.z, expected.z, EPSILON)))
+
+#define cr_assert_vec3_eq(actual, expected) cr_assert(all(epsilon_eq(dbl, actual.x, expected.x, EPSILON), \
+                                                          epsilon_eq(dbl, actual.y, expected.y, EPSILON), \
+                                                          epsilon_eq(dbl, actual.z, expected.z, EPSILON)))
+
+#define cr_expect_vec4_eq(actual, expected) cr_expect(all(epsilon_eq(dbl, actual.x, expected.x, EPSILON), \
+                                                          epsilon_eq(dbl, actual.y, expected.y, EPSILON), \
+                                                          epsilon_eq(dbl, actual.z, expected.z, EPSILON), \
+                                                          epsilon_eq(dbl, actual.w, expected.w, EPSILON)))
+
+#define cr_assert_vec4_eq(actual, expected) cr_assert(all(epsilon_eq(dbl, actual.x, expected.x, EPSILON), \
+                                                          epsilon_eq(dbl, actual.y, expected.y, EPSILON), \
+                                                          epsilon_eq(dbl, actual.z, expected.z, EPSILON), \
+                                                          epsilon_eq(dbl, actual.w, expected.w, EPSILON)))
 
 // Triggers a cr_expect assertion to fail if the matrices are not equal
 void mat2EqExpect(Mat2 actual, Mat2 expected)
@@ -373,4 +421,59 @@ Test(matrix_operations, matrix_invert)
     mat4EqExpect(mat4Inv(matC), matD);
     mat4EqExpect(mat4Inv(matE), matF);
     mat4EqExpect(mat4Mul(mat4Mul(matG, matH), mat4Inv(matH)), matG);
+}
+
+Test(matrix_transformations, translation)
+{
+    cr_expect_point_eq(mat4VecMul(translation(5, -3, 2), point(-3, 4, 5)), 2, 1, 7);
+    cr_expect_point_eq(mat4VecMul(mat4Inv(translation(5, -3, 2)), point(-3, 4, 5)), -8, 7, 3);
+    cr_expect_vector_eq(mat4VecMul(translation(5, -3, 2), vector(-3, 4, 5)), -3, 4, 5);
+}
+
+Test(matrix_transformations, scaling)
+{
+    cr_expect_point_eq(mat4VecMul(scaling(2, 3, 4), point(-4, 6, 8)), -8, 18, 32);
+    cr_expect_vector_eq(mat4VecMul(scaling(2, 3, 4), vector(-4, 6, 8)), -8, 18, 32);
+    cr_expect_vector_eq(mat4VecMul(mat4Inv(scaling(2, 3, 4)), vector(-4, 6, 8)), -2, 2, 2);
+}
+
+Test(matrix_transformations, reflection)
+{
+    cr_expect_point_eq(mat4VecMul(scaling(-1, 1, 1), point(2, 3, 4)), -2, 3, 4);
+}
+
+Test(matrix_transformations, roation)
+{
+    cr_expect_point_eq(mat4VecMul(rotationX(M_PI_4), point(0, 1, 0)), 0, M_SQRT1_2, M_SQRT1_2);
+    cr_expect_point_eq(mat4VecMul(rotationX(M_PI_2), point(0, 1, 0)), 0, 0, 1);
+    cr_expect_point_eq(mat4VecMul(mat4Inv(rotationX(M_PI_4)), point(0, 1, 0)), 0, M_SQRT1_2, -M_SQRT1_2);
+    cr_expect_point_eq(mat4VecMul(rotationY(M_PI_4), point(0, 0, 1)), M_SQRT1_2, 0, M_SQRT1_2);
+    cr_expect_point_eq(mat4VecMul(rotationY(M_PI_2), point(0, 0, 1)), 1, 0, 0);
+    cr_expect_point_eq(mat4VecMul(rotationZ(M_PI_4), point(0, 1, 0)), -M_SQRT1_2, M_SQRT1_2, 0);
+    cr_expect_point_eq(mat4VecMul(rotationZ(M_PI_2), point(0, 1, 0)), -1, 0, 0);
+}
+
+Test(matrix_transformations, shearing)
+{
+    cr_expect_point_eq(mat4VecMul(shearing(1, 0, 0, 0, 0, 0), point(2, 3, 4)), 5, 3, 4);
+    cr_expect_point_eq(mat4VecMul(shearing(0, 1, 0, 0, 0, 0), point(2, 3, 4)), 6, 3, 4);
+    cr_expect_point_eq(mat4VecMul(shearing(0, 0, 1, 0, 0, 0), point(2, 3, 4)), 2, 5, 4);
+    cr_expect_point_eq(mat4VecMul(shearing(0, 0, 0, 1, 0, 0), point(2, 3, 4)), 2, 7, 4);
+    cr_expect_point_eq(mat4VecMul(shearing(0, 0, 0, 0, 1, 0), point(2, 3, 4)), 2, 3, 6);
+    cr_expect_point_eq(mat4VecMul(shearing(0, 0, 0, 0, 0, 1), point(2, 3, 4)), 2, 3, 7);
+}
+
+Test(matrix_transformations, chaining)
+{
+    Mat4 rotation = rotationX(M_PI_2);
+    Mat4 scaling = scaling(5, 5, 5);
+    Mat4 translation = translation(10, 5, 7);
+    Vec4 point = point(1, 0, 1);
+    point = mat4VecMul(rotation, point);
+    cr_expect_point_eq(point, 1, -1, 0);
+    point = mat4VecMul(scaling, point);
+    cr_expect_point_eq(point, 5, -5, 0);
+    point = mat4VecMul(translation, point);
+    cr_expect_point_eq(point, 15, 0, 7);
+    cr_expect_point_eq(mat4VecMul(mat4Mul(mat4Mul(translation(10, 5, 7), scaling(5, 5, 5)), rotationX(M_PI_2)), point(1, 0, 1)), 15, 0, 7);
 }
