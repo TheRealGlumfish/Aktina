@@ -3,7 +3,8 @@ project('Aktina', 'c', version: '0.1.0', license : 'BSD-3-Clause',
 
 cc = meson.get_compiler('c')
 m_dep = cc.find_library('m', required : false)
-criterion_dep = dependency('criterion', required : false, fallback : 'criterion')
+criterion_fallback = (cc.get_id() != 'msvc')
+criterion_dep = dependency('criterion', required : false, allow_fallback : criterion_fallback)
 
 if criterion_dep.found()
   tuples_test = executable('tuples_tests', ['src/tuples.c', 'test/tuples_test.c'], dependencies : [m_dep, criterion_dep])
