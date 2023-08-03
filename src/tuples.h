@@ -34,6 +34,4 @@ Tuple tupleCross(Tuple a, Tuple b);
 Tuple tupleProd(Tuple a, Tuple b);
 Tuple tuplePPM(Tuple a);
 
-void tick(Tuple *projectile_position, Tuple *projectile_velocity, Tuple gravity_vector, Tuple wind_vector);
-
 #endif

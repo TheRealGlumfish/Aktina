@@ -11,7 +11,6 @@
 #include "canvas.h"
 #include "vectors.h"
 
-// TODO: Use [Static 1] syntax for Canvas *
 struct Canvas_s
 {
     size_t width;

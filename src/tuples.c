@@ -91,9 +91,3 @@ Tuple tuplePPM(const Tuple a)
                    .z = fmin(fmax(0, a.z * PPM_DEPTH), PPM_DEPTH),
                    .w = fmin(fmax(0, a.w * PPM_DEPTH), PPM_DEPTH)};
 }
-
-void tick(Tuple *projectilePosition, Tuple *projectileVelocity, Tuple gravityVector, Tuple windVector)
-{
-    *projectilePosition = tupleAdd(*projectilePosition, *projectileVelocity);
-    *projectileVelocity = tupleAdd(*projectileVelocity, tupleAdd(gravityVector, windVector));
-}

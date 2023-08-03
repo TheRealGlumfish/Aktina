@@ -23,7 +23,7 @@ Directory              | Use
 
 ### Modules
 
-Module   | Files | Notes
+Module   | Files                                                          | Notes
 :-------:|:---------------------------------------------------------------|:--------------------------------------
 Tuples   | [`tuples.c`](src/tuples.c), [`tuples.h`](src/tuples.h)         | Chapter 1; Unused, merged into Vectors
 Canvas   | [`canvas.c`](src/canvas.c), [`canvas.h`](src/canvas.h)         | Chapter 2
