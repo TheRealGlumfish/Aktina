@@ -13,12 +13,11 @@
 int main(void)
 {
     Canvas *canvas = canvasCreate(2048, 2048);
-    Shape sphere = sphere(mat4Mul(translation(2.5, 2.5, 9), scaling(2, 2, 2)));
-    Shape sphere2 = sphere(translation(1.8, 3.2, 8));
+    Shape sphere = sphere(mat4Mul(translation(2.5, 2.5, 9), scaling(2, 2, 2)), MATERIAL);
+    Shape sphere2 = sphere(translation(1.8, 3.2, 8), MATERIAL);
     Vec3 sphereColor = {{255, 0, 0}};
     Vec3 sphere2Color = {{0, 255, 0}};
     Vec4 cameraOrigin = point(2.5, 2.5, 0);
-    Vec4 cameraDirection = {.z = 10};
     double canvasX = 0;
     double canvasY = 5;
     double canvasZ = 10;
@@ -29,10 +28,9 @@ int main(void)
     {
         for (size_t j = 0; j < canvasHeight(canvas); j++)
         {
-            canvasPoint.x = canvasX + ((float)i / canvasWidth(canvas)) * canvasSize;
-            canvasPoint.y = canvasY - ((float)j / canvasHeight(canvas)) * canvasSize;
-            cameraDirection = vec4Sub(canvasPoint, cameraOrigin);
-            cameraRay.direction = cameraDirection;
+            canvasPoint.x = canvasX + ((double)i / canvasWidth(canvas)) * canvasSize;
+            canvasPoint.y = canvasY - ((double)j / canvasHeight(canvas)) * canvasSize;
+            cameraRay.direction = vec4Sub(canvasPoint, cameraOrigin);
             Intersections cameraIntersections = intersect(sphere, cameraRay);
             Intersection cameraHit = hit(cameraIntersections);
             if (cameraHit.shape.type == SPHERE)

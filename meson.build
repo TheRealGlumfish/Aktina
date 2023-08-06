@@ -30,3 +30,4 @@ if criterion_dep.found()
 endif
 
 executable('sphere', ['test/sphere.c', 'src/rays.c', 'src/vectors.c', 'src/canvas.c'], dependencies : [m_dep])
+executable('lighting', ['test/lighting.c', 'src/rays.c', 'src/vectors.c', 'src/canvas.c'], dependencies : [m_dep])
