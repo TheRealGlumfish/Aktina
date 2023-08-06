@@ -266,6 +266,12 @@ Vec4 vec4Prod(Vec4 a, Vec4 b)
     return result;
 }
 
+// Returns a vector reflected around the normal vector
+Vec4 vec4Reflect(const Vec4 vec, const Vec4 normal)
+{
+    return vec4Sub(vec, vec4Mul(normal, 2 * vec4Dot(vec, normal)));
+}
+
 // TODO: Vectorize by treating the elements as vectors
 // Checks for equality of 2*2 matrices
 bool mat2Eq(const Mat2 a, const Mat2 b)

@@ -97,7 +97,7 @@ Intersections intersect(const Shape shape, Ray ray)
     {
     case SPHERE:
     {
-        ray = rayTransform(ray, mat4Inv(shape.transform));
+        ray = rayTransform(ray, shape.transformInv);
         // NOTE: It may be faster to do these opertions using Vec3 functions
         const Vec4 sphereToRay = vec4Sub(ray.origin, point(0, 0, 0));
         const double a = vec4Dot(ray.direction, ray.direction);
@@ -140,5 +140,57 @@ Intersection hit(const Intersections intersections)
             return intersections.elem[i];
         }
     }
-    return (Intersection){{NO_HIT, {{0}}}, -1};
+    return (Intersection){{NO_HIT, {{0}}, {{0}}, {0}}, -1};
+}
+
+// Returns the vector normal to the shape at point on the surfaces point
+// Important: The point must be on the shape's surface
+Vec4 normal(const Shape shape, Vec4 point)
+{
+    switch (shape.type)
+    {
+    case SPHERE:
+    {
+        point = mat4VecMul(shape.transformInv, point);
+        point = vec4Sub(point, point(0, 0, 0));
+        point = mat4VecMul(mat4Trans(shape.transformInv), point);
+        point.w = 0;
+        return vec4Norm(point);
+        break;
+    }
+    default:
+        abort();
+    }
+}
+
+// Returns the value of light received by the camera on the point on a shape
+// Imporntant: Ensure vectors are normalized
+Vec3 lighting(const Material material, const Light light, const Vec4 point, const Vec4 camera, const Vec4 normal)
+{
+    const Vec3 effectiveColor = vec3Prod(material.color, light.intensity);
+    const Vec4 vecLight = vec4Norm(vec4Sub(light.position, point));
+    const Vec3 ambient = vec3Mul(effectiveColor, material.ambient);
+    Vec3 diffuse;
+    Vec3 specular;
+    const double lightDotNormal = vec4Dot(vecLight, normal);
+    if (signbit(lightDotNormal)) // NOTE: Test if < 0 is better for branch prediction
+    {
+        diffuse = color(0, 0, 0); // NOTE: Test if the use of compound litterals affects performance
+        specular = color(0, 0, 0);
+    }
+    else
+    {
+        diffuse = vec3Mul(effectiveColor, material.diffuse * lightDotNormal);
+        const Vec4 vecReflect = vec4Reflect(vec4Neg(vecLight), normal);
+        const double reflectDotCamera = vec4Dot(vecReflect, camera);
+        if (reflectDotCamera <= 0)
+        {
+            specular = color(0, 0, 0);
+        }
+        else
+        {
+            specular = vec3Mul(light.intensity, material.specular * pow(reflectDotCamera, material.shininess));
+        }
+    }
+    return vec3Add(vec3Add(ambient, diffuse), specular);
 }

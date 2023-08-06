@@ -266,6 +266,16 @@ Test(vector_operations, vector_ppm)
     cr_expect_dbl(round(vec3PPM(color(-0.5, 0, 1)).z), (color(0, 0, 255)).z);
 }
 
+Test(vector_operations, vector_reflect)
+{
+    Vec4 vecA = vector(1, -1, 0);
+    Vec4 normA = vector(0, 1, 0);
+    cr_expect_vector_eq(vec4Reflect(vecA, normA), 1, 1, 0);
+    Vec4 vecB = vector(0, -1, 0);
+    Vec4 normB = vector(M_SQRT1_2, M_SQRT1_2, 0);
+    cr_expect_vector_eq(vec4Reflect(vecB, normB), 1, 0, 0);
+}
+
 Test(matrix_operations, matrix_multiply)
 {
     // TODO: Add unit tests for Mat2 and Mat3 types

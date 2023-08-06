@@ -4,8 +4,17 @@
  * Copyright (c) 2023, Dimitrios Alexopoulos All rights reserved.
  */
 
+// TODO: Find a better solution than _XOPEN_SOURCE
+#ifdef _WIN32
+#define _USE_MATH_DEFINES
+#endif
+#ifdef __unix__
+#define _XOPEN_SOURCE
+#endif
+
 #include <criterion/criterion.h>
 #include <criterion/new/assert.h>
+#include <math.h>
 
 #include "src/rays.h"
 #include "src/vectors.h"
@@ -36,6 +45,14 @@
                                                            epsilon_eq(dbl, actual.z, c, EPSILON), \
                                                            epsilon_eq(dbl, actual.w, 0, EPSILON)))
 
+#define cr_expect_vec3_eq(actual, expected) cr_expect(all(epsilon_eq(dbl, actual.x, expected.x, EPSILON), \
+                                                          epsilon_eq(dbl, actual.y, expected.y, EPSILON), \
+                                                          epsilon_eq(dbl, actual.z, expected.z, EPSILON)))
+
+#define cr_assert_vec3_eq(actual, expected) cr_assert(all(epsilon_eq(dbl, actual.x, expected.x, EPSILON), \
+                                                          epsilon_eq(dbl, actual.y, expected.y, EPSILON), \
+                                                          epsilon_eq(dbl, actual.z, expected.z, EPSILON)))
+
 // TODO: Add comparison to the shape parameter
 #define shape_eq(actual, expected) all(eq(int, actual.type, expected.type))
 
@@ -55,7 +72,7 @@ Test(ray_operations, position)
 Test(sphere_operations, interesect)
 {
     Ray ray1 = ray(0, 0, -5, 0, 0, 1);
-    Shape sphere = sphere(IDENTITY);
+    Shape sphere = sphere(IDENTITY, MATERIAL);
     Intersections xs1 = intersect(sphere, ray1);
     Intersection i1 = {sphere, 4};
     Intersection i2 = {sphere, 6};
@@ -95,7 +112,7 @@ Test(sphere_operations, interesect)
 
 Test(sphere_operations, hit)
 {
-    Shape sphere = sphere(IDENTITY);
+    Shape sphere = sphere(IDENTITY, MATERIAL);
     Intersection i1 = {sphere, 1};
     Intersection i2 = {sphere, 2};
     Intersections xs;
@@ -145,7 +162,7 @@ Test(ray_operations, transform)
 Test(sphere_operations, transform)
 {
     Ray ray = ray(0, 0, -5, 0, 0, 1);
-    Shape sphere = sphere(scaling(2, 2, 2));
+    Shape sphere = sphere(scaling(2, 2, 2), MATERIAL);
     Intersections xs = intersect(sphere, ray);
     Intersection i1 = {sphere, 3};
     Intersection i2 = {sphere, 7};
@@ -154,8 +171,39 @@ Test(sphere_operations, transform)
     cr_expect_intersection_eq(xs.elem[1], i2);
     intersectionsDestroy(&xs);
     Ray ray2 = ray(0, 0, -5, 0, 0, 1);
-    Shape sphere2 = sphere(translation(5, 0, 0));
+    Shape sphere2 = sphere(translation(5, 0, 0), MATERIAL);
     Intersections xs2 = intersect(sphere2, ray2);
     cr_assert(eq(sz, xs2.size, 0));
     intersectionsDestroy(&xs2);
+}
+
+Test(sphere_operations, normal)
+{
+    Shape sphere = sphere(IDENTITY, MATERIAL);
+    cr_expect_vector_eq(normal(sphere, point(1, 0, 0)), 1, 0, 0);
+    cr_expect_vector_eq(normal(sphere, point(0, 1, 0)), 0, 1, 0);
+    cr_expect_vector_eq(normal(sphere, point(0, 0, 1)), 0, 0, 1);
+    cr_expect_vector_eq(normal(sphere, point(sqrt(3) / 3, sqrt(3) / 3, sqrt(3) / 3)), sqrt(3) / 3, sqrt(3) / 3, sqrt(3) / 3);
+    cr_expect_dbl(vec4Mag(normal(sphere, point(sqrt(3) / 3, sqrt(3) / 3, sqrt(3) / 3))), 1);
+    Shape sphere2 = sphere(translation(0, 1, 0), MATERIAL);
+    cr_expect_vector_eq(normal(sphere2, point(0, 1.70711, -0.70711)), 0, 0.70711, -0.70711);
+    Shape sphere3 = sphere(mat4Mul(scaling(1, 0.5, 1), rotationZ(M_PI / 5)), MATERIAL);
+    cr_expect_vector_eq(normal(sphere3, point(0, M_SQRT1_2, -M_SQRT1_2)), 0, 0.97014, -0.24254);
+}
+
+Test(materials, lighting)
+{
+    Material m = MATERIAL;
+    Vec4 position = point(0, 0, 0);
+    Vec4 vecEye = vector(0, 0, -1);
+    Vec4 vecNormal = vector(0, 0, -1);
+    Light light = light(0, 0, -10, 1, 1, 1);
+    cr_assert_vec3_eq(lighting(m, light, position, vecEye, vecNormal), (color(1.9, 1.9, 1.9)));
+    Vec4 vecEye2 = vector(0, -M_SQRT1_2, -M_SQRT1_2);
+    cr_assert_vec3_eq(lighting(m, light, position, vecEye2, vecNormal), (color(1, 1, 1)));
+    Light light2 = light(0, 10, -10, 1, 1, 1);
+    cr_assert_vec3_eq(lighting(m, light2, position, vecEye, vecNormal), (color(0.7364, 0.7364, 0.7364)));
+    cr_assert_vec3_eq(lighting(m, light2, position, vecEye2, vecNormal), (color(1.6364, 1.6364, 1.6364)));
+    Light light3 = light(0, 0, 10, 1, 1, 1);
+    cr_assert_vec3_eq(lighting(m, light3, position, vecEye, vecNormal), (color(0.1, 0.1, 0.1)));
 }

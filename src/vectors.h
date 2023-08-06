@@ -159,6 +159,8 @@ Vec4 vec4Norm(Vec4 a);
 double vec4Dot(Vec4 a, Vec4 b);
 Vec4 vec4Prod(Vec4 a, Vec4 b);
 
+Vec4 vec4Reflect(Vec4 vec, Vec4 normal);
+
 bool mat2Eq(Mat2 a, Mat2 b);
 bool mat3Eq(Mat3 a, Mat3 b);
 
