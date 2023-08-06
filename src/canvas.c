@@ -22,7 +22,7 @@ struct Canvas_s
 // Important: If the allocation fails, NULL is returned
 Canvas *canvasCreate(const size_t width, const size_t height)
 {
-    Canvas *canvas = malloc(sizeof(Canvas) + sizeof(Vec3[width * height]));
+    Canvas *canvas = malloc(sizeof(Canvas) + sizeof(Vec3) * width * height);
     if (canvas == NULL)
     {
         return canvas;
@@ -42,12 +42,12 @@ Canvas *canvasCreate(const size_t width, const size_t height)
 // Important: If the allocation fails, NULL is returned
 Canvas *canvasCopy(const Canvas *canvas)
 {
-    Canvas *copyCanvas = malloc(sizeof(Canvas) + sizeof(Vec3[canvas->width * canvas->height]));
+    Canvas *copyCanvas = malloc(sizeof(Canvas) + sizeof(Vec3) * canvas->width * canvas->height);
     if (copyCanvas == NULL)
     {
         return copyCanvas;
     }
-    memcpy(copyCanvas, canvas, sizeof(Canvas) + sizeof(Vec3[canvas->width * canvas->height]));
+    memcpy(copyCanvas, canvas, sizeof(Canvas) + sizeof(Vec3) * canvas->width * canvas->height);
     return copyCanvas;
 }
 

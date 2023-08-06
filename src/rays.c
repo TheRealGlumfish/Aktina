@@ -16,7 +16,7 @@
 // Important: size must be greater than 0.
 void intersectionsCreate(Intersections *dest, const size_t size)
 {
-    dest->elem = malloc(sizeof(Intersection[size]));
+    dest->elem = malloc(sizeof(Intersection) * size);
     if (dest->elem == NULL)
     {
         dest->size = 0;
@@ -32,7 +32,7 @@ void intersectionsCreate(Intersections *dest, const size_t size)
 // Important: size must be greater than 0.
 void intersectionsCopy(Intersections *dest, const Intersections *src)
 {
-    dest->elem = malloc(sizeof(Intersection[src->size]));
+    dest->elem = malloc(sizeof(Intersection) * src->size);
     if (dest->elem == NULL)
     {
         dest->size = 0;
@@ -40,7 +40,7 @@ void intersectionsCopy(Intersections *dest, const Intersections *src)
     else
     {
         dest->size = src->size;
-        memcpy(dest->elem, src->elem, sizeof(Intersection[dest->size]));
+        memcpy(dest->elem, src->elem, sizeof(Intersection) * dest->size);
     }
     intersectionsSort(dest);
 }
