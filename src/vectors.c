@@ -592,3 +592,17 @@ Mat4 mat4Inv(const Mat4 a)
     }
     return inverted;
 }
+
+// Returns a view transformation matrix
+Mat4 viewTransform(const Vec4 origin, const Vec4 destination, Vec4 up)
+{
+    const Vec3 forward = vec3Norm(vec3Sub(destination.xyz, origin.xyz));
+    up.xyz = vec3Norm(up.xyz); // TODO: Check if normalize Vec3 faster/slower than Vec4
+    const Vec3 left = vec3Cross(forward, up.xyz);
+    up.xyz = vec3Cross(left, forward);
+    Mat4 viewTransform = {{{left.x, left.y, left.z, 0},
+                           {up.x, up.y, up.z, 0},
+                           {-forward.x, -forward.y, -forward.z, 0},
+                           {0, 0, 0, 1}}};
+    return mat4Mul(viewTransform, translation(-origin.x, -origin.y, -origin.z));
+}

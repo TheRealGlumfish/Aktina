@@ -16,6 +16,7 @@
 #include <criterion/new/assert.h>
 #include <math.h>
 
+#include "src/canvas.h"
 #include "src/rays.h"
 #include "src/vectors.h"
 
@@ -116,21 +117,21 @@ Test(sphere_operations, hit)
     Intersection i1 = {sphere, 1};
     Intersection i2 = {sphere, 2};
     Intersections xs;
-    intersectionsCopy(&xs, &(Intersections){2, (Intersection[2]){i2, i1}});
+    intersectionsCopy(&xs, &(Intersections){2, 2, (Intersection[2]){i2, i1}});
     Intersection i = hit(xs);
     cr_expect_intersection_eq(i, i1);
     intersectionsDestroy(&xs);
     Intersection i3 = {sphere, -1};
     Intersection i4 = {sphere, 1};
     Intersections xs2;
-    intersectionsCopy(&xs2, &(Intersections){2, (Intersection[2]){i4, i3}});
+    intersectionsCopy(&xs2, &(Intersections){2, 2, (Intersection[2]){i4, i3}});
     i = hit(xs2);
     cr_expect_intersection_eq(i, i4);
     intersectionsDestroy(&xs2);
     Intersection i5 = {sphere, -2};
     Intersection i6 = {sphere, -1};
     Intersections xs3;
-    intersectionsCopy(&xs3, &(Intersections){2, (Intersection[2]){i6, i5}});
+    intersectionsCopy(&xs3, &(Intersections){2, 2, (Intersection[2]){i6, i5}});
     i = hit(xs3);
     cr_expect(eq(int, i.shape.type, NO_HIT));
     intersectionsDestroy(&xs3);
@@ -139,7 +140,7 @@ Test(sphere_operations, hit)
     Intersection i9 = {sphere, -3};
     Intersection i10 = {sphere, 2};
     Intersections xs4;
-    intersectionsCopy(&xs4, &(Intersections){4, (Intersection[4]){i7, i8, i9, i10}});
+    intersectionsCopy(&xs4, &(Intersections){4, 4, (Intersection[4]){i7, i8, i9, i10}});
     i = hit(xs4);
     cr_expect_intersection_eq(i, i10);
     intersectionsDestroy(&xs4);
@@ -206,4 +207,105 @@ Test(materials, lighting)
     cr_assert_vec3_eq(lighting(m, light2, position, vecEye2, vecNormal), (color(1.6364, 1.6364, 1.6364)));
     Light light3 = light(0, 0, 10, 1, 1, 1);
     cr_assert_vec3_eq(lighting(m, light3, position, vecEye, vecNormal), (color(0.1, 0.1, 0.1)));
+}
+
+Test(world, interesect_world)
+{
+    World world = defaultWorld();
+    Ray ray = ray(0, 0, -5, 0, 0, 1);
+    Intersections worldIntersections = intersectWorld(world, ray);
+    cr_assert(eq(sz, worldIntersections.size, 4));
+    cr_expect_dbl(worldIntersections.elem[0].t, 4);
+    cr_expect_dbl(worldIntersections.elem[1].t, 4.5);
+    cr_expect_dbl(worldIntersections.elem[2].t, 5.5);
+    cr_expect_dbl(worldIntersections.elem[3].t, 6);
+    intersectionsDestroy(&worldIntersections);
+    worldDestroy(&world);
+}
+
+Test(sphere_operations, prepare_computations)
+{
+    Ray ray1 = ray(0, 0, -5, 0, 0, 1);
+    Shape sphere = sphere(IDENTITY, MATERIAL);
+    Intersection i1 = {sphere, 4};
+    Computations comps = prepareComputations(i1, ray1);
+    Intersection compsIntersection = {comps.shape, comps.t};
+    cr_expect_intersection_eq(compsIntersection, i1);
+    cr_expect_point_eq(comps.point, 0, 0, -1);
+    cr_expect_vector_eq(comps.camera, 0, 0, -1);
+    cr_expect_vector_eq(comps.normal, 0, 0, -1);
+    cr_expect(not(comps.inside));
+    Ray ray2 = ray(0, 0, 0, 0, 0, 1);
+    Intersection i2 = {sphere, 1};
+    Computations comps2 = prepareComputations(i2, ray2);
+    cr_expect_point_eq(comps2.point, 0, 0, 1);
+    cr_expect_vector_eq(comps2.camera, 0, 0, -1);
+    cr_expect_vector_eq(comps2.normal, 0, 0, -1);
+    cr_expect(comps2.inside);
+}
+
+Test(world, shade_hit)
+{
+    World world1 = defaultWorld();
+    Ray ray1 = ray(0, 0, -5, 0, 0, 1);
+    Intersection i1 = {world1.shapes[0], 4};
+    Computations comps1 = prepareComputations(i1, ray1);
+    cr_expect_vec3_eq(shadeHit(world1, comps1), (color(0.38066, 0.47583, 0.2855)));
+    worldDestroy(&world1);
+    World world2 = defaultWorld();
+    world2.lights[0] = light(0, 0.25, 0, 1, 1, 1);
+    Ray ray2 = ray(0, 0, 0, 0, 0, 1);
+    Intersection i2 = {world2.shapes[1], 0.5};
+    Computations comps2 = prepareComputations(i2, ray2);
+    cr_expect_vec3_eq(shadeHit(world2, comps2), (color(0.90498, 0.90498, 0.90498)));
+    worldDestroy(&world2);
+}
+
+Test(world, color_at)
+{
+    World world1 = defaultWorld();
+    Ray ray1 = ray(0, 0, -5, 0, 1, 0);
+    Ray ray2 = ray(0, 0, -5, 0, 0, 1);
+    cr_expect_vec3_eq(colorAt(world1, ray1), (color(0, 0, 0)));
+    cr_expect_vec3_eq(colorAt(world1, ray2), (color(0.38066, 0.47583, 0.2855)));
+    worldDestroy(&world1);
+    World world2 = defaultWorld();
+    world2.shapes[0].material.ambient = 1;
+    world2.shapes[1].material.ambient = 1;
+    Ray ray3 = ray(0, 0, 0.75, 0, 0, -1);
+    cr_expect_vec3_eq(colorAt(world2, ray3), world2.shapes[1].material.color);
+    worldDestroy(&world2);
+}
+
+Test(world, camera)
+{
+    const Camera cameraH = cameraInit(200, 125, M_PI_2, IDENTITY);
+    cr_expect_dbl(cameraH.pixelSize, 0.01);
+    const Camera cameraV = cameraInit(125, 200, M_PI_2, IDENTITY);
+    cr_expect_dbl(cameraV.pixelSize, 0.01);
+}
+
+Test(world, ray_pixel)
+{
+    Camera camera1 = cameraInit(201, 101, M_PI_2, IDENTITY);
+    Ray ray1 = rayPixel(camera1, 100, 50);
+    cr_expect_point_eq(ray1.origin, 0, 0, 0);
+    cr_expect_vector_eq(ray1.direction, 0, 0, -1);
+    Ray ray2 = rayPixel(camera1, 0, 0);
+    cr_expect_point_eq(ray2.origin, 0, 0, 0);
+    cr_expect_vector_eq(ray2.direction, 0.66519, 0.33259, -0.66851);
+    Camera camera2 = cameraInit(201, 101, M_PI_2, mat4Mul(rotationY(M_PI_4), translation(0, -2, 5)));
+    Ray ray3 = rayPixel(camera2, 100, 50);
+    cr_expect_point_eq(ray3.origin, 0, 2, -5);
+    cr_expect_vector_eq(ray3.direction, M_SQRT1_2, 0, -M_SQRT1_2);
+}
+
+Test(world, render)
+{
+    World world = defaultWorld();
+    Camera camera = cameraInit(11, 11, M_PI_2, viewTransform(point(0, 0, -5), point(0, 0, 0), vector(0, 1, 0)));
+    Canvas *image = render(camera, world);
+    cr_expect_vec3_eq(canvasPixel(image, 5, 5), (color(0.38066, 0.47583, 0.2855)));
+    free(image);
+    image = NULL;
 }
