@@ -33,3 +33,4 @@ executable('sphere', ['test/sphere.c', 'src/rays.c', 'src/vectors.c', 'src/canva
 executable('lighting', ['test/lighting.c', 'src/rays.c', 'src/vectors.c', 'src/canvas.c'], dependencies : [m_dep])
 executable('camera', ['test/camera.c', 'src/rays.c', 'src/vectors.c', 'src/canvas.c'], dependencies : [m_dep])
 executable('shadows', ['test/shadows.c', 'src/rays.c', 'src/vectors.c', 'src/canvas.c'], dependencies : [m_dep])
+executable('planes', ['test/planes.c', 'src/rays.c', 'src/vectors.c', 'src/canvas.c'], dependencies : [m_dep])
