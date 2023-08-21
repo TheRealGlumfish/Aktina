@@ -149,32 +149,48 @@ Ray rayPixel(const Camera camera, const size_t x, const size_t y)
 // Returns the intersection between a shape and a ray
 Intersections intersect(const Shape shape, Ray ray)
 {
+    ray = rayTransform(ray, shape.transformInv);
     switch (shape.type)
     {
     case SPHERE:
     {
-        ray = rayTransform(ray, shape.transformInv);
         // NOTE: It may be faster to do these operations using Vec3 functions
         const Vec4 sphereToRay = vec4Sub(ray.origin, point(0, 0, 0));
         const double a = vec4Dot(ray.direction, ray.direction);
         const double b = 2 * vec4Dot(ray.direction, sphereToRay);
         const double c = vec4Dot(sphereToRay, sphereToRay) - 1;
         const double discriminant = (b * b) - (4 * a * c);
-        Intersections sphereIntersection; // TODO: Rename
+        Intersections sphereIntersections;
         if (discriminant < 0)
         {
-            sphereIntersection.size = 0;
-            sphereIntersection.capacity = 0;
-            sphereIntersection.elem = NULL;
-            return sphereIntersection;
+            sphereIntersections.size = 0;
+            sphereIntersections.capacity = 0;
+            sphereIntersections.elem = NULL;
+            return sphereIntersections;
         }
         double point1 = (-b - sqrt(discriminant)) / (2 * a);
         double point2 = (-b + sqrt(discriminant)) / (2 * a);
         Intersection intersectionPoints[2] = {{shape, point1}, {shape, point2}};
         // TODO: Do manually (no intersectionsCopy) to avoid sorting
-        intersectionsCopy(&sphereIntersection, &(Intersections){2, 2, intersectionPoints});
-        return sphereIntersection;
-        break;
+        intersectionsCopy(&sphereIntersections, &(Intersections){2, 2, intersectionPoints});
+        return sphereIntersections;
+    }
+    case PLANE:
+    {
+        Intersections planeIntersections;
+        if (fabs(ray.direction.y) < MAT_EPSILON)
+        {
+            planeIntersections.size = 0;
+            planeIntersections.capacity = 0;
+            planeIntersections.elem = NULL;
+        }
+        else
+        {
+            intersectionsCreate(&planeIntersections, 1);
+            planeIntersections.elem[0].shape = shape;
+            planeIntersections.elem[0].t = -ray.origin.y / ray.direction.y;
+        }
+        return planeIntersections;
     }
     default:
         abort(); // TODO: Remove
@@ -204,12 +220,17 @@ Vec4 normal(const Shape shape, Vec4 point)
     {
     case SPHERE:
     {
-        point = mat4VecMul(shape.transformInv, point);
+        point = mat4VecMul(shape.transformInv, point); // move outside of switch for other shapes
         point = vec4Sub(point, point(0, 0, 0));
         point = mat4VecMul(mat4Trans(shape.transformInv), point);
         point.w = 0;
         return vec4Norm(point);
-        break;
+    }
+    case PLANE:
+    {
+        point = mat4VecMul(mat4Trans(shape.transformInv), vector(0, 1, 0));
+        point.w = 0;
+        return point;
     }
     default:
         abort();
@@ -273,6 +294,10 @@ World defaultWorld(void)
     world.shapes[0].material.diffuse = 0.7;
     world.shapes[0].material.specular = 0.2;
     world.shapes[1] = sphere(scaling(0.5, 0.5, 0.5), MATERIAL);
+    if (world.lights == NULL || world.shapes == NULL)
+    {
+        abort();
+    }
     return world;
 }
 
@@ -394,7 +419,7 @@ Camera cameraInit(const size_t hsize, const size_t vsize, const double fov, cons
 Canvas *render(const Camera camera, const World world)
 {
     Canvas *image = canvasCreate(camera.hsize, camera.vsize);
-    if (image == NULL) // Move canvas error handling code insdie the canvas functions
+    if (image == NULL) // Move canvas error handling code inside the canvas functions
     {
         abort();
     }

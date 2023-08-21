@@ -21,6 +21,8 @@
 
 #define sphere(transform, material) (Shape){SPHERE, transform, mat4Inv(transform), material}
 
+#define plane(transform, material) (Shape){PLANE, transform, mat4Inv(transform), material}
+
 // clang-format on
 
 typedef struct
@@ -32,6 +34,7 @@ typedef struct
 typedef enum
 {
     SPHERE,
+    PLANE,
     NO_HIT
 } ShapeType;
 

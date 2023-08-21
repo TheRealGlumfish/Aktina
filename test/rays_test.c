@@ -333,3 +333,34 @@ Test(world, is_shadowed)
     cr_expect(not(isShadowed(world, 0, point(-2, 2, -2))));
     worldDestroy(&world);
 }
+
+Test(plane_operations, normal)
+{
+    Shape plane = plane(IDENTITY, MATERIAL);
+    cr_expect_vector_eq(normal(plane, point(0, 0, 0)), 0, 1, 0);
+    cr_expect_vector_eq(normal(plane, point(10, 0, -10)), 0, 1, 0);
+    cr_expect_vector_eq(normal(plane, point(-5, 0, 150)), 0, 1, 0);
+}
+
+Test(plane_operations, intersect)
+{
+    Shape plane = plane(IDENTITY, MATERIAL);
+    Ray ray1 = ray(0, 10, 0, 0, 0, 1);
+    Intersections xs1 = intersect(plane, ray1);
+    cr_assert(eq(sz, xs1.size, 0));
+    intersectionsDestroy(&xs1);
+    Ray ray2 = ray(0, 0, 0, 0, 0, 1);
+    Intersections xs2 = intersect(plane, ray2);
+    cr_assert(eq(sz, xs2.size, 0));
+    intersectionsDestroy(&xs2);
+    Ray ray3 = ray(0, 1, 0, 0, -1, 0);
+    Intersection i1 = {plane, 1};
+    Intersections xs3 = intersect(plane, ray3);
+    cr_assert(eq(sz, xs3.size, 1));
+    cr_expect_intersection_eq(xs3.elem[0], i1);
+    intersectionsDestroy(&xs3);
+    Ray ray4 = ray(0, -1, 0, 0, 1, 0);
+    Intersections xs4 = intersect(plane, ray4);
+    cr_expect_intersection_eq(xs4.elem[0], i1);
+    intersectionsDestroy(&xs4);
+}
