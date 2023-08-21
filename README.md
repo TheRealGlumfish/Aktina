@@ -24,12 +24,12 @@ Directory              | Use
 ### Modules
 
 Module   | Files                                                          | Notes
-:-------:|:---------------------------------------------------------------|:----------------------------------------------------
+:-------:|:---------------------------------------------------------------|:-----------------------------------------------------------------
 Tuples   | [`tuples.c`](src/tuples.c), [`tuples.h`](src/tuples.h)         | Chapter 1; Unused, merged into Vectors
 Canvas   | [`canvas.c`](src/canvas.c), [`canvas.h`](src/canvas.h)         | Chapter 2
 Matrices | [`matrices.c`](src/matrices.c), [`matrices.h`](src/matrices.h) | Chapter 3; Unused, merged into Vectors
 Vectors  | [`vectors.c`](src/vectors.c), [`vectors.h`](src/vectors.h)     | Chapter 1, 3, 4
-Rays     | [`rays.c`](src/rays.c), [`rays.h`](src/rays.h)                 | Chapter 5, 6, 7; Demo `sphere`, `lighting`, `camera`
+Rays     | [`rays.c`](src/rays.c), [`rays.h`](src/rays.h)                 | Chapter 5, 6, 7, 8; Demo `sphere`, `lighting`, `camera`, `shadows`
 
 ## Demos
 
@@ -45,6 +45,11 @@ It shows a sphere that is lit by a point light.
 ![lighting](https://github.com/TheRealGlumfish/Aktina/assets/65093316/43125288-0ee3-4e0d-85ee-7eb062cc044a)
 
 ### Camera - Chapter 7
-Source code for this demo is located in [`test/camera.c`](test/camera.c).
+Source code for this demo is located in [`test/camera.c`](https://github.com/TheRealGlumfish/Aktina/blob/c1ba2b4a3516e15a9163b6924e3c0b607036cf44/test/camera.c) [(dd88842)](https://github.com/TheRealGlumfish/Aktina/tree/dd888426e94a6b25100cda4c4b0772b22b87249e).
 It shows three spheres surrounded by two "walls" and a "floor".
 ![camera](https://github.com/TheRealGlumfish/Aktina/assets/65093316/42526543-5067-4e62-8738-454f26dc1827)
+
+### Shadows - Chapter 8
+Source code for this demo is located in [`test/shadows.c`](test/shadows.c).
+It shows three spheres surrounded by two "walls" and a "floor", illuminated by two light sources.
+![shadows](https://github.com/TheRealGlumfish/Aktina/assets/65093316/c8714682-d319-463e-bc97-fb089338d7eb)
