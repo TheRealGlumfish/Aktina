@@ -24,12 +24,12 @@ Directory              | Use
 ### Modules
 
 Module   | Files                                                          | Notes
-:-------:|:---------------------------------------------------------------|:-----------------------------------------------------------------
+:-------:|:---------------------------------------------------------------|:------------------------------------------------------------------------------
 Tuples   | [`tuples.c`](src/tuples.c), [`tuples.h`](src/tuples.h)         | Chapter 1; Unused, merged into Vectors
 Canvas   | [`canvas.c`](src/canvas.c), [`canvas.h`](src/canvas.h)         | Chapter 2
 Matrices | [`matrices.c`](src/matrices.c), [`matrices.h`](src/matrices.h) | Chapter 3; Unused, merged into Vectors
 Vectors  | [`vectors.c`](src/vectors.c), [`vectors.h`](src/vectors.h)     | Chapter 1, 3, 4
-Rays     | [`rays.c`](src/rays.c), [`rays.h`](src/rays.h)                 | Chapter 5, 6, 7, 8; Demo `sphere`, `lighting`, `camera`, `shadows`
+Rays     | [`rays.c`](src/rays.c), [`rays.h`](src/rays.h)                 | Chapter 5, 6, 7, 8, 9; Demo `sphere`, `lighting`, `camera`, `shadows`, `planes`
 
 ## Demos
 
@@ -53,3 +53,8 @@ It shows three spheres surrounded by two "walls" and a "floor".
 Source code for this demo is located in [`test/shadows.c`](test/shadows.c).
 It shows three spheres surrounded by two "walls" and a "floor", illuminated by two light sources.
 ![shadows](https://github.com/TheRealGlumfish/Aktina/assets/65093316/c8714682-d319-463e-bc97-fb089338d7eb)
+
+### Planes - Chapter 9
+Source code for this demo is located in [`test/planes.c`](test/planes.c).
+It shows three spheres, sitting on a plane, illuminated by three colored lights.
+![planes](https://github.com/TheRealGlumfish/Aktina/assets/65093316/f71a44f7-6f0c-49ce-be9d-22378763cf85)
