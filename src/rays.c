@@ -12,6 +12,8 @@
 #include "rays.h"
 #include "vectors.h"
 
+// TODO: Test if using `vec3Mag` and `vec3Norm` is faster than the `Vec4` variants
+
 // Intersection collection constructor.
 // If the allocation fails, size is set to zero.
 // Important: size must be greater than 0.
@@ -216,7 +218,7 @@ Vec4 normal(const Shape shape, Vec4 point)
 
 // Returns the value of light received by the camera on the point on a shape.
 // Important: Ensure vectors are normalized.
-Vec3 lighting(const Material material, const Light light, const Vec4 point, const Vec4 camera, const Vec4 normal)
+Vec3 lighting(const Material material, const Light light, const Vec4 point, const Vec4 camera, const Vec4 normal, const bool inShadow)
 {
     const Vec3 effectiveColor = vec3Prod(material.color, light.intensity);
     const Vec4 vecLight = vec4Norm(vec4Sub(light.position, point));
@@ -224,7 +226,7 @@ Vec3 lighting(const Material material, const Light light, const Vec4 point, cons
     Vec3 diffuse;
     Vec3 specular;
     const double lightDotNormal = vec4Dot(vecLight, normal);
-    if (signbit(lightDotNormal)) // NOTE: Test if < 0 is better for branch prediction
+    if (inShadow || signbit(lightDotNormal)) // NOTE: Test if < 0 is better for branch prediction
     {
         diffuse = color(0, 0, 0); // NOTE: Test if the use of compound literals affects performance
         specular = color(0, 0, 0);
@@ -243,7 +245,7 @@ Vec3 lighting(const Material material, const Light light, const Vec4 point, cons
             specular = vec3Mul(light.intensity, material.specular * pow(reflectDotCamera, material.shininess));
         }
     }
-    return vec3Add(vec3Add(ambient, diffuse), specular);
+    return vec3Add(vec3Add(ambient, diffuse), specular); // Potentially split into 2 return statements to avoid unnecessary additions
 }
 
 // World destructor
@@ -295,6 +297,25 @@ Intersections intersectWorld(World world, Ray ray)
     return worldIntersections;
 }
 
+// Returns weather a certain point is shadowed by the light at the given index in the world
+// Important: `lightIndex` begins at zero
+bool isShadowed(const World world, const size_t lightIndex, const Vec4 point)
+{
+    Vec4 vec = vec4Sub(world.lights[lightIndex].position, point);
+    Ray ray = {point, vec4Norm(vec)};
+    Intersections lightIntersections = intersectWorld(world, ray);
+    Intersection lightHit = hit(lightIntersections);
+    intersectionsDestroy(&lightIntersections);
+    if (lightHit.shape.type != NO_HIT && lightHit.t < vec4Mag(vec))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 // Pre-computes certain vectors and returns a Computations object
 Computations prepareComputations(const Intersection intersection, const Ray ray)
 {
@@ -313,6 +334,7 @@ Computations prepareComputations(const Intersection intersection, const Ray ray)
     {
         computations.inside = false;
     }
+    computations.overPoint = vec4Add(computations.point, vec4Mul(computations.normal, MAT_EPSILON));
     return computations;
 }
 
@@ -326,7 +348,7 @@ Vec3 shadeHit(const World world, const Computations computations)
                            lighting(computations.shape.material, world.lights[i],
                                     computations.point,
                                     computations.camera,
-                                    computations.normal));
+                                    computations.normal, isShadowed(world, i, computations.overPoint)));
     }
     return hitColor;
 }
@@ -349,7 +371,7 @@ Vec3 colorAt(const World world, const Ray ray)
 }
 
 // Camera constructor
-Camera cameraInit(const size_t hsize, const size_t vsize, const float fov, const Mat4 transform)
+Camera cameraInit(const size_t hsize, const size_t vsize, const double fov, const Mat4 transform)
 {
     Camera camera = {hsize, vsize, fov, .transform = transform,
                      .transformInv = mat4Inv(transform)};

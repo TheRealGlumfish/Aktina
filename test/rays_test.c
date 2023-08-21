@@ -199,14 +199,15 @@ Test(materials, lighting)
     Vec4 vecEye = vector(0, 0, -1);
     Vec4 vecNormal = vector(0, 0, -1);
     Light light = light(0, 0, -10, 1, 1, 1);
-    cr_assert_vec3_eq(lighting(m, light, position, vecEye, vecNormal), (color(1.9, 1.9, 1.9)));
+    cr_assert_vec3_eq(lighting(m, light, position, vecEye, vecNormal, false), (color(1.9, 1.9, 1.9)));
     Vec4 vecEye2 = vector(0, -M_SQRT1_2, -M_SQRT1_2);
-    cr_assert_vec3_eq(lighting(m, light, position, vecEye2, vecNormal), (color(1, 1, 1)));
+    cr_assert_vec3_eq(lighting(m, light, position, vecEye2, vecNormal, false), (color(1, 1, 1)));
     Light light2 = light(0, 10, -10, 1, 1, 1);
-    cr_assert_vec3_eq(lighting(m, light2, position, vecEye, vecNormal), (color(0.7364, 0.7364, 0.7364)));
-    cr_assert_vec3_eq(lighting(m, light2, position, vecEye2, vecNormal), (color(1.6364, 1.6364, 1.6364)));
+    cr_assert_vec3_eq(lighting(m, light2, position, vecEye, vecNormal, false), (color(0.7364, 0.7364, 0.7364)));
+    cr_assert_vec3_eq(lighting(m, light2, position, vecEye2, vecNormal, false), (color(1.6364, 1.6364, 1.6364)));
     Light light3 = light(0, 0, 10, 1, 1, 1);
-    cr_assert_vec3_eq(lighting(m, light3, position, vecEye, vecNormal), (color(0.1, 0.1, 0.1)));
+    cr_assert_vec3_eq(lighting(m, light3, position, vecEye, vecNormal, false), (color(0.1, 0.1, 0.1)));
+    cr_assert_vec3_eq(lighting(m, light, position, vecEye, vecNormal, true), (color(0.1, 0.1, 0.1)));
 }
 
 Test(world, interesect_world)
@@ -226,8 +227,8 @@ Test(world, interesect_world)
 Test(sphere_operations, prepare_computations)
 {
     Ray ray1 = ray(0, 0, -5, 0, 0, 1);
-    Shape sphere = sphere(IDENTITY, MATERIAL);
-    Intersection i1 = {sphere, 4};
+    Shape sphere1 = sphere(IDENTITY, MATERIAL);
+    Intersection i1 = {sphere1, 4};
     Computations comps = prepareComputations(i1, ray1);
     Intersection compsIntersection = {comps.shape, comps.t};
     cr_expect_intersection_eq(compsIntersection, i1);
@@ -236,12 +237,17 @@ Test(sphere_operations, prepare_computations)
     cr_expect_vector_eq(comps.normal, 0, 0, -1);
     cr_expect(not(comps.inside));
     Ray ray2 = ray(0, 0, 0, 0, 0, 1);
-    Intersection i2 = {sphere, 1};
+    Intersection i2 = {sphere1, 1};
     Computations comps2 = prepareComputations(i2, ray2);
     cr_expect_point_eq(comps2.point, 0, 0, 1);
     cr_expect_vector_eq(comps2.camera, 0, 0, -1);
     cr_expect_vector_eq(comps2.normal, 0, 0, -1);
     cr_expect(comps2.inside);
+    Shape sphere2 = sphere(translation(0, 0, 1), MATERIAL);
+    Intersection i3 = {sphere2, 5};
+    Computations comps3 = prepareComputations(i3, ray1);
+    cr_expect(lt(dbl, comps3.overPoint.z, -MAT_EPSILON / 2));
+    cr_expect(gt(dbl, comps3.point.z, comps.overPoint.z));
 }
 
 Test(world, shade_hit)
@@ -259,8 +265,15 @@ Test(world, shade_hit)
     Computations comps2 = prepareComputations(i2, ray2);
     cr_expect_vec3_eq(shadeHit(world2, comps2), (color(0.90498, 0.90498, 0.90498)));
     worldDestroy(&world2);
+    Shape sphere1 = sphere(IDENTITY, MATERIAL);
+    Shape sphere2 = sphere(translation(0, 0, 10), MATERIAL);
+    World world3 = {1, 2, &(Light){point(0, 0, -10), color(1, 1, 1)},
+                    (Shape[2]){sphere1, sphere2}};
+    Ray ray3 = ray(0, 0, 5, 0, 0, 1);
+    Intersection i3 = {sphere2, 4};
+    Computations comps3 = prepareComputations(i3, ray3);
+    cr_expect_vec3_eq(shadeHit(world3, comps3), (color(0.1, 0.1, 0.1)));
 }
-
 Test(world, color_at)
 {
     World world1 = defaultWorld();
@@ -306,6 +319,17 @@ Test(world, render)
     Camera camera = cameraInit(11, 11, M_PI_2, viewTransform(point(0, 0, -5), point(0, 0, 0), vector(0, 1, 0)));
     Canvas *image = render(camera, world);
     cr_expect_vec3_eq(canvasPixel(image, 5, 5), (color(0.38066, 0.47583, 0.2855)));
+    worldDestroy(&world);
     free(image);
     image = NULL;
+}
+
+Test(world, is_shadowed)
+{
+    World world = defaultWorld();
+    cr_expect(not(isShadowed(world, 0, point(0, 10, 0))));
+    cr_expect(isShadowed(world, 0, point(10, -10, 10)));
+    cr_expect(not(isShadowed(world, 0, point(-20, 20, -20))));
+    cr_expect(not(isShadowed(world, 0, point(-2, 2, -2))));
+    worldDestroy(&world);
 }

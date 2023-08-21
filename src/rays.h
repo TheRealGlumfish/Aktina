@@ -82,8 +82,9 @@ typedef struct
 typedef struct
 {
     Shape shape;
-    float t;
+    double t;
     Vec4 point;
+    Vec4 overPoint;
     Vec4 camera;
     Vec4 normal;
     bool inside;
@@ -93,10 +94,10 @@ typedef struct
 {
     size_t hsize;
     size_t vsize;
-    float fov;
-    float pixelSize;
-    float halfWidth;
-    float halfHeight;
+    double fov;
+    double pixelSize;
+    double halfWidth;
+    double halfHeight;
     Mat4 transform;
     Mat4 transformInv;
 } Camera;
@@ -116,15 +117,16 @@ Ray rayPixel(Camera camera, size_t x, size_t y);
 Intersections intersect(Shape shape, Ray ray);
 Intersection hit(Intersections intersections);
 Vec4 normal(Shape shape, Vec4 point);
-Vec3 lighting(Material material, Light light, Vec4 point, Vec4 eye, Vec4 normal);
+Vec3 lighting(Material material, Light light, Vec4 point, Vec4 eye, Vec4 normal, bool inShadow);
 
 void worldDestroy(World *world);
 World defaultWorld(void);
 Intersections intersectWorld(World world, Ray ray);
 
+bool isShadowed(World world, size_t lightIndex, Vec4 point);
 Computations prepareComputations(Intersection intersection, Ray ray);
 Vec3 shadeHit(World world, Computations computations);
 Vec3 colorAt(World world, Ray ray);
 
-Camera cameraInit(size_t hsize, size_t vsize, float fov, Mat4 transform);
+Camera cameraInit(size_t hsize, size_t vsize, double fov, Mat4 transform);
 Canvas *render(Camera camera, World world);
