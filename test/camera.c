@@ -28,8 +28,8 @@ int main(void)
                                     mat4Mul(rotationX(M_PI_2), scaling(10, 0.01, 10))),
                             floor.material);
     Shape rightWall = sphere(mat4Mul(mat4Mul(translation(0, 0, 5), rotationY(M_PI_4)),
-                                    mat4Mul(rotationX(M_PI_2), scaling(10, 0.01, 10))),
-                            floor.material);
+                                     mat4Mul(rotationX(M_PI_2), scaling(10, 0.01, 10))),
+                             floor.material);
     Shape middle = sphere(translation(-0.5, 1, 0.5), MATERIAL);
     middle.material.color = color(0.1, 1, 0.5);
     middle.material.diffuse = 0.7;
@@ -42,8 +42,8 @@ int main(void)
     left.material.color = color(1, 0.8, 0.1);
     left.material.diffuse = 0.7;
     left.material.specular = 0.3;
-    World world = {1, 6, &light(-10, 10, -10, 1, 1, 1), (Shape []){floor, leftWall, rightWall, middle, right, left}};
-    Camera camera = cameraInit(2000, 1000, M_PI / 3, viewTransform(point(0, 1.5, -5), point(0, 1, 0), vector(0, 1, 0))); 
+    World world = {1, 6, &light(-10, 10, -10, 1, 1, 1), (Shape[]){floor, leftWall, rightWall, middle, right, left}};
+    Camera camera = cameraInit(2000, 1000, M_PI / 3, viewTransform(point(0, 1.5, -5), point(0, 1, 0), vector(0, 1, 0)));
     Canvas *image = render(camera, world);
     char *imagePPM = canvasPPM(image);
     free(image);

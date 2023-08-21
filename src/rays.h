@@ -106,7 +106,8 @@ void intersectionsCopy(Intersections *dest, const Intersections *src);
 void intersectionsDestroy(Intersections *dest);
 void intersectionsSort(Intersections *dest);
 void intersectionResize(Intersections *dest, size_t size);
-void intersectionsInsert(Intersections *dest, Intersection intersection);
+void intersectionsPush(Intersections *dest, Intersection intersection);
+Intersection intersectionPop(Intersections *dest);
 
 Vec4 rayPos(Ray ray, double t);
 Ray rayTransform(Ray ray, Mat4 mat);

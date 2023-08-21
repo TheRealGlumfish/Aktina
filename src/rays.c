@@ -96,7 +96,7 @@ void intersectionResize(Intersections *dest, const size_t size)
 }
 
 // Inserts an element at the end of the collection
-void intersectionsInsert(Intersections *dest, const Intersection intersection)
+void intersectionsPush(Intersections *dest, const Intersection intersection)
 {
     if (dest->size <= dest->capacity)
     {
@@ -109,6 +109,13 @@ void intersectionsInsert(Intersections *dest, const Intersection intersection)
     }
     dest->elem[dest->size] = intersection;
     dest->size++;
+}
+
+// Removes an element at the end of the collection and returns it
+Intersection intersectionPop(Intersections *dest)
+{
+    dest->size--;
+    return dest->elem[dest->size];
 }
 
 // Returns a point on the ray
@@ -277,7 +284,7 @@ Intersections intersectWorld(World world, Ray ray)
         Intersections shapeIntersections = intersect(world.shapes[i], ray);
         for (size_t j = 0; j < shapeIntersections.size; j++)
         {
-            intersectionsInsert(&worldIntersections, shapeIntersections.elem[j]);
+            intersectionsPush(&worldIntersections, shapeIntersections.elem[j]);
         }
         intersectionsDestroy(&shapeIntersections);
     }
