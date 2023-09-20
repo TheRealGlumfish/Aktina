@@ -38,7 +38,7 @@ int main(void)
                 Vec4 hitPoint = rayPos(cameraRay, cameraHit.t);
                 Vec4 hitNormal = normal(sphere, hitPoint);
                 Vec3 pointColor = lighting(sphere.material, light, hitPoint,
-                                           vec4Neg(vec4Norm(cameraRay.direction)), hitNormal);
+                                           vec4Neg(vec4Norm(cameraRay.direction)), hitNormal, false);
                 canvasPixelWrite(canvas, i, j, pointColor);
             }
             intersectionsDestroy(&cameraIntersections);

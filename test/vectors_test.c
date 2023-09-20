@@ -488,9 +488,9 @@ Test(matrix_transformations, shearing)
 
 Test(matrix_transformations, chaining)
 {
-    Mat4 rotation = rotationX(M_PI_2);
-    Mat4 scaling = scaling(5, 5, 5);
-    Mat4 translation = translation(10, 5, 7);
+    const Mat4 rotation = rotationX(M_PI_2);
+    const Mat4 scaling = scaling(5, 5, 5);
+    const Mat4 translation = translation(10, 5, 7);
     Vec4 point = point(1, 0, 1);
     point = mat4VecMul(rotation, point);
     cr_expect_point_eq(point, 1, -1, 0);
@@ -498,5 +498,19 @@ Test(matrix_transformations, chaining)
     cr_expect_point_eq(point, 5, -5, 0);
     point = mat4VecMul(translation, point);
     cr_expect_point_eq(point, 15, 0, 7);
+    cr_expect_point_eq(mat4VecMul(mat4Mul(mat4Mul(translation, scaling), rotation), point(1, 0, 1)), 15, 0, 7);
     cr_expect_point_eq(mat4VecMul(mat4Mul(mat4Mul(translation(10, 5, 7), scaling(5, 5, 5)), rotationX(M_PI_2)), point(1, 0, 1)), 15, 0, 7);
+}
+
+Test(matrix_transformations, view_transform)
+{
+    Vec4 up = vector(0, 1, 0);
+    mat4EqExpect(viewTransform(point(0, 0, 0), point(0, 0, -1), up), IDENTITY);
+    mat4EqExpect(viewTransform(point(0, 0, 0), point(0, 0, 1), up), scaling(-1, 1, -1));
+    mat4EqExpect(viewTransform(point(0, 0, 8), point(0, 0, 0), up), translation(0, 0, -8));
+    Mat4 matView = {{{-0.50709, 0.50709, 0.67612, -2.36643},
+                     {0.76772, 0.60609, 0.12122, -2.82843},
+                     {-0.35857, 0.59761, -0.71714, 0},
+                     {0, 0, 0, 1}}};
+    mat4EqExpect(viewTransform(point(1, 3, 2), point(4, -2, 8), vector(1, 1, 0)), matView);
 }

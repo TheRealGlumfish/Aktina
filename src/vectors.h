@@ -40,10 +40,10 @@
                              {0, sin(r),  cos(r), 0},\
                              {0,      0,       0, 1}}}
 
-#define rotationY(r) (Mat4){{{cos(r),       0, sin(r), 0},\
-                             {     0,       1,      0, 0},\
-                             {     0, -sin(r), cos(r), 0},\
-                             {     0,       0,      0, 1}}}
+#define rotationY(r) (Mat4){{{ cos(r), 0, sin(r), 0},\
+                             {      0, 1,      0, 0},\
+                             {-sin(r), 0, cos(r), 0},\
+                             {     0,  0,      0, 1}}}
 
 #define rotationZ(r) (Mat4){{{cos(r), -sin(r), 0, 0},\
                              {sin(r),  cos(r), 0, 0},\
@@ -191,4 +191,5 @@ double mat4Cof(size_t row, size_t col, Mat4 a);
 
 Mat4 mat4Inv(Mat4 a);
 
+Mat4 viewTransform(Vec4 origin, Vec4 destination, Vec4 up);
 #endif
