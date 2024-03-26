@@ -105,11 +105,17 @@ typedef struct
     Mat4 transformInv;
 } Camera;
 
+typedef struct
+{
+    Vec3 (*function)(Vec4, const void*);
+    void *parameters;
+} Pattern;
+
 void intersectionsCreate(Intersections *dest, size_t size);
 void intersectionsCopy(Intersections *dest, const Intersections *src);
 void intersectionsDestroy(Intersections *dest);
 void intersectionsSort(Intersections *dest);
-void intersectionResize(Intersections *dest, size_t size);
+void intersectionsResize(Intersections *dest, size_t size);
 void intersectionsPush(Intersections *dest, Intersection intersection);
 Intersection intersectionPop(Intersections *dest);
 

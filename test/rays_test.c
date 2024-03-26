@@ -274,6 +274,7 @@ Test(world, shade_hit)
     Computations comps3 = prepareComputations(i3, ray3);
     cr_expect_vec3_eq(shadeHit(world3, comps3), (color(0.1, 0.1, 0.1)));
 }
+
 Test(world, color_at)
 {
     World world1 = defaultWorld();
