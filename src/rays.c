@@ -5,6 +5,7 @@
  */
 
 #include <math.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -251,9 +252,19 @@ Vec4 normal(const Shape shape, Vec4 point)
 
 // Returns the value of light received by the camera on the point on a shape.
 // Important: Ensure vectors are normalized.
-Vec3 lighting(const Material material, const Light light, const Vec4 point, const Vec4 camera, const Vec4 normal, const bool inShadow)
+// TODO: Remove material parameter
+Vec3 lighting(const Material material, const Shape object, const Light light, const Vec4 point, const Vec4 camera, const Vec4 normal, const bool inShadow)
 {
-    const Vec3 effectiveColor = vec3Prod(material.color, light.intensity);
+    Vec3 color;
+    if (material.hasPattern)
+    {
+       color = stripeAtObject(object, point); 
+    }
+    else
+    {
+        color = material.color;
+    }
+    const Vec3 effectiveColor = vec3Prod(color, light.intensity);
     const Vec4 vecLight = vec4Norm(vec4Sub(light.position, point));
     const Vec3 ambient = vec3Mul(effectiveColor, material.ambient);
     Vec3 diffuse;
@@ -383,10 +394,12 @@ Vec3 shadeHit(const World world, const Computations computations)
     for (size_t i = 0; i < world.lightCount; i++)
     {
         hitColor = vec3Add(hitColor,
-                           lighting(computations.shape.material, world.lights[i],
+                           lighting(computations.shape.material, computations.shape,
+                                    world.lights[i],
                                     computations.point,
                                     computations.camera,
-                                    computations.normal, isShadowed(world, i, computations.overPoint)));
+                                    computations.normal,
+                                    isShadowed(world, i, computations.overPoint)));
     }
     return hitColor;
 }
@@ -429,6 +442,7 @@ Camera cameraInit(const size_t hsize, const size_t vsize, const double fov, cons
     return camera;
 }
 
+// Renders the world from a given camera
 Canvas *render(const Camera camera, const World world)
 {
     Canvas *image = canvasCreate(camera.hsize, camera.vsize);
@@ -446,4 +460,23 @@ Canvas *render(const Camera camera, const World world)
         }
     }
     return image;
+}
+
+// Creates a stripped pattern
+StripePattern stripePattern(const Vec3 colorA, const Vec3 colorB, const Mat4 transform)
+{
+    return (StripePattern){colorA, colorB, transform, mat4Inv(transform)};
+}
+
+Vec3 stripeAt(const StripePattern pattern, const Vec4 point)
+{
+    return (int64_t)floor(point.x) % 2 == 0 ? pattern.a : pattern.b;
+}
+
+Vec3 stripeAtObject(const Shape object, Vec4 point)
+{
+    // TODO: See if this can be done only on the x to avoid extra math
+    point = mat4VecMul(object.transformInv, point);
+    point = mat4VecMul(object.material.pattern.transformInv, point);
+    return stripeAt(object.material.pattern, point);
 }

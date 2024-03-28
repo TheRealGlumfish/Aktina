@@ -199,15 +199,15 @@ Test(materials, lighting)
     Vec4 vecEye = vector(0, 0, -1);
     Vec4 vecNormal = vector(0, 0, -1);
     Light light = light(0, 0, -10, 1, 1, 1);
-    cr_assert_vec3_eq(lighting(m, light, position, vecEye, vecNormal, false), (color(1.9, 1.9, 1.9)));
+    cr_assert_vec3_eq(lighting(m, sphere(IDENTITY, m), light, position, vecEye, vecNormal, false), (color(1.9, 1.9, 1.9)));
     Vec4 vecEye2 = vector(0, -M_SQRT1_2, -M_SQRT1_2);
-    cr_assert_vec3_eq(lighting(m, light, position, vecEye2, vecNormal, false), (color(1, 1, 1)));
+    cr_assert_vec3_eq(lighting(m, sphere(IDENTITY, m), light, position, vecEye2, vecNormal, false), (color(1, 1, 1)));
     Light light2 = light(0, 10, -10, 1, 1, 1);
-    cr_assert_vec3_eq(lighting(m, light2, position, vecEye, vecNormal, false), (color(0.7364, 0.7364, 0.7364)));
-    cr_assert_vec3_eq(lighting(m, light2, position, vecEye2, vecNormal, false), (color(1.6364, 1.6364, 1.6364)));
+    cr_assert_vec3_eq(lighting(m, sphere(IDENTITY, m), light2, position, vecEye, vecNormal, false), (color(0.7364, 0.7364, 0.7364)));
+    cr_assert_vec3_eq(lighting(m, sphere(IDENTITY, m), light2, position, vecEye2, vecNormal, false), (color(1.6364, 1.6364, 1.6364)));
     Light light3 = light(0, 0, 10, 1, 1, 1);
-    cr_assert_vec3_eq(lighting(m, light3, position, vecEye, vecNormal, false), (color(0.1, 0.1, 0.1)));
-    cr_assert_vec3_eq(lighting(m, light, position, vecEye, vecNormal, true), (color(0.1, 0.1, 0.1)));
+    cr_assert_vec3_eq(lighting(m, sphere(IDENTITY, m), light3, position, vecEye, vecNormal, false), (color(0.1, 0.1, 0.1)));
+    cr_assert_vec3_eq(lighting(m, sphere(IDENTITY, m), light, position, vecEye, vecNormal, true), (color(0.1, 0.1, 0.1)));
 }
 
 Test(world, interesect_world)
@@ -364,4 +364,61 @@ Test(plane_operations, intersect)
     Intersections xs4 = intersect(plane, ray4);
     cr_expect_intersection_eq(xs4.elem[0], i1);
     intersectionsDestroy(&xs4);
+}
+
+Test(patterns, stripe_pattern)
+{
+    const Vec3 black = color(0, 0, 0);
+    const Vec3 white = color(1, 1, 1);
+    StripePattern pattern = stripePattern(white, black, IDENTITY);
+    cr_expect_vec3_eq(pattern.a, white);
+    cr_expect_vec3_eq(pattern.b, black);
+    cr_expect_vec3_eq(stripeAt(pattern, point(0, 0, 0)), white);
+    cr_expect_vec3_eq(stripeAt(pattern, point(0, 1, 0)), white);
+    cr_expect_vec3_eq(stripeAt(pattern, point(0, 2, 0)), white);
+    cr_expect_vec3_eq(stripeAt(pattern, point(0, 0, 1)), white);
+    cr_expect_vec3_eq(stripeAt(pattern, point(0, 0, 2)), white);
+    cr_expect_vec3_eq(stripeAt(pattern, point(0.9, 0, 0)), white);
+    cr_expect_vec3_eq(stripeAt(pattern, point(1, 0, 0)), black);
+    cr_expect_vec3_eq(stripeAt(pattern, point(-0.1, 0, 0)), black);
+    cr_expect_vec3_eq(stripeAt(pattern, point(-1, 0, 0)), black);
+    cr_expect_vec3_eq(stripeAt(pattern, point(-1.1, 0, 0)), white);
+}
+
+Test(materials, pattern)
+{
+    Material m;
+    m.ambient = 1;
+    m.diffuse = 0;
+    m.specular = 0;
+    m.pattern = stripePattern(color(1, 1, 1), color(0, 0, 0), IDENTITY);
+    m.hasPattern = true;
+    Vec4 eyev = vector(0, 0, -1);
+    Vec4 normalv = vector(0, 0, -1);
+    Light light = light(0, 0, -10, 1, 1, 1);
+    Vec3 c1 = lighting(m, sphere(IDENTITY, m), light, point(0.9, 0, 0), eyev, normalv, false);
+    Vec3 c2 = lighting(m, sphere(IDENTITY,m), light, point(1.1, 0, 0), eyev, normalv, false);
+    cr_expect_vec3_eq(c1, (color(1, 1, 1)));
+    cr_expect_vec3_eq(c2, (color(0, 0, 0)));
+}
+
+Test(patterns, transformations)
+{
+    const Vec3 white = color(1, 1, 1);
+    const Vec3 black = color(0, 0, 0);
+    Shape sphere1 = sphere(scaling(2, 2, 2), MATERIAL);
+    sphere1.material.hasPattern = true;
+    sphere1.material.pattern = stripePattern(white, black, IDENTITY);
+    const Vec3 c1 = stripeAtObject(sphere1, point(1.5, 0, 0));
+    cr_expect_vec3_eq(c1, white);
+    Shape sphere2 = sphere(IDENTITY, MATERIAL);
+    sphere2.material.hasPattern = true;
+    sphere2.material.pattern = stripePattern(white, black, scaling(2, 2, 2));
+    const Vec3 c2 = stripeAtObject(sphere2, point(1.5, 0, 0));
+    cr_expect_vec3_eq(c2, white);
+    Shape sphere3 = sphere(scaling(2, 2, 2), MATERIAL);
+    sphere3.material.hasPattern = true;
+    sphere3.material.pattern = stripePattern(white, black, translation(0.5, 0, 0));
+    const Vec3 c3 = stripeAtObject(sphere3, point(2.5, 0, 0));
+    cr_expect_vec3_eq(c3, white);
 }
