@@ -5,6 +5,7 @@
  */
 
 #include <math.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -15,28 +16,39 @@
 // TODO: Test if using `vec3Mag` and `vec3Norm` is faster than the `Vec4` variants
 
 // Intersection collection constructor.
-// If the allocation fails, size is set to zero.
-// Important: size must be greater than 0.
+// If the allocation fails, `abort()` is called
 void intersectionsCreate(Intersections *dest, const size_t size)
 {
-    dest->elem = malloc(sizeof(Intersection) * size);
-    if (dest->elem == NULL)
+    if (size != 0)
     {
-        abort();
+        dest->elem = malloc(sizeof(Intersection[size]));
+        if (dest->elem == NULL)
+        {
+            abort();
+        }
+        dest->size = size;
+        dest->capacity = size;
     }
     else
     {
-        dest->size = size;
-        dest->capacity = size;
+        dest->elem = NULL;
+        dest->size = 0;
+        dest->capacity = 0;
     }
 }
 
 // Intersection collection copy constructor.
 // If the allocation fails, size is set to zero.
-// Important: size must be greater than 0.
 void intersectionsCopy(Intersections *dest, const Intersections *src)
 {
-    dest->elem = malloc(sizeof(Intersection) * src->size);
+    if (src->size == 0)
+    {
+        dest->size = 0;
+        dest->capacity = 0;
+        dest->elem = NULL;
+        return;
+    }
+    dest->elem = malloc(sizeof(Intersection[src->size]));
     if (dest->elem == NULL)
     {
         abort();
@@ -44,7 +56,8 @@ void intersectionsCopy(Intersections *dest, const Intersections *src)
     else
     {
         dest->size = src->size;
-        memcpy(dest->elem, src->elem, sizeof(Intersection) * dest->size);
+        dest->capacity = src->capacity;
+        memcpy(dest->elem, src->elem, sizeof(Intersection[src->size]));
     }
     intersectionsSort(dest);
 }
@@ -82,35 +95,37 @@ void intersectionsSort(Intersections *dest)
 }
 
 // Resizes the size of the intersection collection.
-// Important: Size must be more than zero.
-void intersectionResize(Intersections *dest, const size_t size)
+// Info: Actual allocation cannot shrink
+void intersectionsResize(Intersections *dest, const size_t size)
 {
-    if (size < dest->capacity)
+    dest->size = size;
+    if (size > dest->capacity)
     {
-        dest->elem = realloc(dest->elem, sizeof(Intersection) * dest->capacity * 2);
-        dest->capacity *= 2;
+        if (dest->capacity != 0)
+        {
+            while (dest->capacity < size)
+            {
+                // TOOD: Make this more efficient using bitshifts
+                dest->capacity *= 2;
+            }
+        }
+        else
+        {
+            dest->capacity = size;
+        }
+        dest->elem = realloc(dest->elem, sizeof(Intersection[dest->capacity]));
         if (dest->elem == NULL)
         {
             abort();
         }
     }
-    dest->size = size;
 }
 
 // Inserts an element at the end of the collection
 void intersectionsPush(Intersections *dest, const Intersection intersection)
 {
-    if (dest->size <= dest->capacity)
-    {
-        dest->elem = realloc(dest->elem, sizeof(Intersection) * (dest->capacity + 1) * 2);
-        dest->capacity = (dest->capacity + 1) * 2;
-        if (dest->elem == NULL)
-        {
-            abort();
-        }
-    }
-    dest->elem[dest->size] = intersection;
-    dest->size++;
+    intersectionsResize(dest, dest->size + 1);
+    dest->elem[dest->size - 1] = intersection;
 }
 
 // Removes an element at the end of the collection and returns it
@@ -163,16 +178,16 @@ Intersections intersect(const Shape shape, Ray ray)
         Intersections sphereIntersections;
         if (discriminant < 0)
         {
-            sphereIntersections.size = 0;
-            sphereIntersections.capacity = 0;
-            sphereIntersections.elem = NULL;
+            intersectionsCreate(&sphereIntersections, 0);
             return sphereIntersections;
         }
         double point1 = (-b - sqrt(discriminant)) / (2 * a);
         double point2 = (-b + sqrt(discriminant)) / (2 * a);
-        Intersection intersectionPoints[2] = {{shape, point1}, {shape, point2}};
-        // TODO: Do manually (no intersectionsCopy) to avoid sorting
-        intersectionsCopy(&sphereIntersections, &(Intersections){2, 2, intersectionPoints});
+        intersectionsCreate(&sphereIntersections, 2);
+        sphereIntersections.elem[0].shape = shape;
+        sphereIntersections.elem[1].shape = shape;
+        sphereIntersections.elem[0].t = point1;
+        sphereIntersections.elem[1].t = point2;
         return sphereIntersections;
     }
     case PLANE:
@@ -180,9 +195,7 @@ Intersections intersect(const Shape shape, Ray ray)
         Intersections planeIntersections;
         if (fabs(ray.direction.y) < MAT_EPSILON)
         {
-            planeIntersections.size = 0;
-            planeIntersections.capacity = 0;
-            planeIntersections.elem = NULL;
+            intersectionsCreate(&planeIntersections, 0);
         }
         else
         {
@@ -239,9 +252,19 @@ Vec4 normal(const Shape shape, Vec4 point)
 
 // Returns the value of light received by the camera on the point on a shape.
 // Important: Ensure vectors are normalized.
-Vec3 lighting(const Material material, const Light light, const Vec4 point, const Vec4 camera, const Vec4 normal, const bool inShadow)
+// TODO: Remove material parameter
+Vec3 lighting(const Material material, const Shape object, const Light light, const Vec4 point, const Vec4 camera, const Vec4 normal, const bool inShadow)
 {
-    const Vec3 effectiveColor = vec3Prod(material.color, light.intensity);
+    Vec3 color;
+    if (material.hasPattern)
+    {
+       color = stripeAtObject(object, point); 
+    }
+    else
+    {
+        color = material.color;
+    }
+    const Vec3 effectiveColor = vec3Prod(color, light.intensity);
     const Vec4 vecLight = vec4Norm(vec4Sub(light.position, point));
     const Vec3 ambient = vec3Mul(effectiveColor, material.ambient);
     Vec3 diffuse;
@@ -305,7 +328,8 @@ World defaultWorld(void)
 // returning them as a sorted intersection collection.
 Intersections intersectWorld(World world, Ray ray)
 {
-    Intersections worldIntersections = {0, 0, NULL};
+    Intersections worldIntersections;
+    intersectionsCreate(&worldIntersections, 0);
     for (size_t i = 0; i < world.shapeCount; i++)
     {
         Intersections shapeIntersections = intersect(world.shapes[i], ray);
@@ -370,10 +394,12 @@ Vec3 shadeHit(const World world, const Computations computations)
     for (size_t i = 0; i < world.lightCount; i++)
     {
         hitColor = vec3Add(hitColor,
-                           lighting(computations.shape.material, world.lights[i],
+                           lighting(computations.shape.material, computations.shape,
+                                    world.lights[i],
                                     computations.point,
                                     computations.camera,
-                                    computations.normal, isShadowed(world, i, computations.overPoint)));
+                                    computations.normal,
+                                    isShadowed(world, i, computations.overPoint)));
     }
     return hitColor;
 }
@@ -416,6 +442,7 @@ Camera cameraInit(const size_t hsize, const size_t vsize, const double fov, cons
     return camera;
 }
 
+// Renders the world from a given camera
 Canvas *render(const Camera camera, const World world)
 {
     Canvas *image = canvasCreate(camera.hsize, camera.vsize);
@@ -433,4 +460,23 @@ Canvas *render(const Camera camera, const World world)
         }
     }
     return image;
+}
+
+// Creates a stripped pattern
+StripePattern stripePattern(const Vec3 colorA, const Vec3 colorB, const Mat4 transform)
+{
+    return (StripePattern){colorA, colorB, transform, mat4Inv(transform)};
+}
+
+Vec3 stripeAt(const StripePattern pattern, const Vec4 point)
+{
+    return (int64_t)floor(point.x) % 2 == 0 ? pattern.a : pattern.b;
+}
+
+Vec3 stripeAtObject(const Shape object, Vec4 point)
+{
+    // TODO: See if this can be done only on the x to avoid extra math
+    point = mat4VecMul(object.transformInv, point);
+    point = mat4VecMul(object.material.pattern.transformInv, point);
+    return stripeAt(object.material.pattern, point);
 }

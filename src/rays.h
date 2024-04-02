@@ -13,7 +13,7 @@
 // clang-format off
 #define ray(x, y, z, xdir, ydir, zdir) (Ray){point(x, y, z), vector(xdir, ydir, zdir)}
 
-#define MATERIAL (Material){{{1, 1, 1}}, 0.1, 0.9, 0.9, 200}
+#define MATERIAL (Material){{{1, 1, 1}}, 0.1, 0.9, 0.9, 200, false}
 
 #define material(r, g, b, ambient, diffuse, specular, shininess) (Material){{{r, g, b}}, ambient, diffuse, specular, shininess}
 
@@ -40,11 +40,22 @@ typedef enum
 
 typedef struct
 {
+    Vec3 a;
+    Vec3 b;
+    Mat4 transform;
+    Mat4 transformInv;
+} StripePattern;
+
+// TODO: Check best way to pack struct
+typedef struct
+{
     Vec3 color;
     double ambient;
     double diffuse;
     double specular;
     double shininess;
+    bool hasPattern;
+    StripePattern pattern;
 } Material;
 
 typedef struct
@@ -105,11 +116,21 @@ typedef struct
     Mat4 transformInv;
 } Camera;
 
+// typedef struct
+// {
+//     Vec3 (*function)(Vec4, const void*);
+//     void *parameters;
+// } Pattern;
+// typedef enum
+// {
+//     STRIPPED
+// } PatternType;
+
 void intersectionsCreate(Intersections *dest, size_t size);
 void intersectionsCopy(Intersections *dest, const Intersections *src);
 void intersectionsDestroy(Intersections *dest);
 void intersectionsSort(Intersections *dest);
-void intersectionResize(Intersections *dest, size_t size);
+void intersectionsResize(Intersections *dest, size_t size);
 void intersectionsPush(Intersections *dest, Intersection intersection);
 Intersection intersectionPop(Intersections *dest);
 
@@ -120,7 +141,7 @@ Ray rayPixel(Camera camera, size_t x, size_t y);
 Intersections intersect(Shape shape, Ray ray);
 Intersection hit(Intersections intersections);
 Vec4 normal(Shape shape, Vec4 point);
-Vec3 lighting(Material material, Light light, Vec4 point, Vec4 eye, Vec4 normal, bool inShadow);
+Vec3 lighting(Material material, Shape object, Light light, Vec4 point, Vec4 eye, Vec4 normal, bool inShadow);
 
 void worldDestroy(World *world);
 World defaultWorld(void);
@@ -133,3 +154,8 @@ Vec3 colorAt(World world, Ray ray);
 
 Camera cameraInit(size_t hsize, size_t vsize, double fov, Mat4 transform);
 Canvas *render(Camera camera, World world);
+
+// Vec3 defaultPattern(Vec4 point, const void *parameters);
+StripePattern stripePattern(Vec3 colorA, Vec3 colorB, Mat4 transform);
+Vec3 stripeAt(StripePattern pattern, Vec4 point);
+Vec3 stripeAtObject(Shape shape, Vec4 point);
