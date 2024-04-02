@@ -21,7 +21,7 @@ void intersectionsCreate(Intersections *dest, const size_t size)
 {
     if (size != 0)
     {
-        dest->elem = malloc(sizeof(Intersection[size]));
+        dest->elem = malloc(sizeof(Intersection) * size);
         if (dest->elem == NULL)
         {
             abort();
@@ -48,7 +48,7 @@ void intersectionsCopy(Intersections *dest, const Intersections *src)
         dest->elem = NULL;
         return;
     }
-    dest->elem = malloc(sizeof(Intersection[src->size]));
+    dest->elem = malloc(sizeof(Intersection) * src->size);
     if (dest->elem == NULL)
     {
         abort();
@@ -57,7 +57,7 @@ void intersectionsCopy(Intersections *dest, const Intersections *src)
     {
         dest->size = src->size;
         dest->capacity = src->capacity;
-        memcpy(dest->elem, src->elem, sizeof(Intersection[src->size]));
+        memcpy(dest->elem, src->elem, sizeof(Intersection) *src->size);
     }
     intersectionsSort(dest);
 }
@@ -113,7 +113,7 @@ void intersectionsResize(Intersections *dest, const size_t size)
         {
             dest->capacity = size;
         }
-        dest->elem = realloc(dest->elem, sizeof(Intersection[dest->capacity]));
+        dest->elem = realloc(dest->elem, sizeof(Intersection) * dest->capacity);
         if (dest->elem == NULL)
         {
             abort();

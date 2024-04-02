@@ -53,3 +53,6 @@ dkms.conf
 
 # Caches
 .cache/
+
+# Visual Studio Files
+.vs/
